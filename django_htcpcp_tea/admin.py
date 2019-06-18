@@ -36,7 +36,7 @@ class PotAdmin(admin.ModelAdmin):
 
     fields = (('name', 'brew_coffee'), 'supported_teas', 'supported_additions')
 
-    list_display = ('id', 'name', 'brew_coffee', 'is_teapot_view')
+    list_display = ('id', 'name', 'brew_coffee', 'tea_capable_view', 'tea_count_view', 'addition_count_view')
 
     list_display_links = ('id', 'name')
 
@@ -46,11 +46,30 @@ class PotAdmin(admin.ModelAdmin):
 
     save_as = True
 
-    def is_teapot_view(self, obj):
-        return obj.is_teapot
+    def tea_capable_view(self, obj):
+        """Display whether the given pot can brew tea."""
+        return obj.tea_capable
 
-    is_teapot_view.boolean = True
-    is_teapot_view.short_description = "Is a teapot?"
+    tea_capable_view.boolean = True
+    tea_capable_view.short_description = "able to brew tea"
+    tea_capable_view.admin_order_field = 'supported_teas'
+
+    def tea_count_view(self, obj):
+        "Display the number of tea types that the given pot supports."
+        return obj.tea_count
+
+    tea_count_view.admin_order_field = 'tea_count'
+    tea_count_view.short_description = 'supported teas'
+
+    def addition_count_view(self, obj):
+        "Display the number of addition types that the given pot supports."
+        return obj.addition_count
+
+    addition_count_view.admin_order_field = 'addition_count'
+    addition_count_view.short_description = 'supported additions'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_tea_count().with_addition_count()
 
 
 @admin.register(TeaType)
