@@ -9,6 +9,27 @@ from django.contrib import admin
 from .models import Addition, Pot, TeaType
 
 
+class BrewTeaListFilter(admin.SimpleListFilter):
+    title = 'able to brew tea'
+
+    parameter_name = 'brew_tea'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('y', 'Yes'),
+            ('n', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+
+        if value == 'y':
+            return queryset.filter(supported_teas__isnull=False)
+
+        if value == 'n':
+            return queryset.filter(supported_teas__isnull=True)
+
+
 @admin.register(Pot)
 class PotAdmin(admin.ModelAdmin):
     search_fields = ('supported_teas__name', 'supported_additions__name')
@@ -21,7 +42,7 @@ class PotAdmin(admin.ModelAdmin):
 
     filter_horizontal = ('supported_teas', 'supported_additions')
 
-    list_filter = ('brew_coffee', ('supported_teas', admin.RelatedOnlyFieldListFilter))
+    list_filter = ('brew_coffee', BrewTeaListFilter, ('supported_teas', admin.RelatedOnlyFieldListFilter))
 
     save_as = True
 
