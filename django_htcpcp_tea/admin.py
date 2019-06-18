@@ -53,7 +53,7 @@ class ServedByAPotListFilter(RelatedItemsExistsListFilter):
 
     parameter_name = 'is_served'
 
-    related_item_field = 'pot'
+    related_item_field = 'pot_list'
 
 
 @admin.register(Pot)
@@ -118,7 +118,7 @@ class PotsServingMixin:
     pots_serving_count_view.short_description = 'pots serving'
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(pot_count=Count('pot'))
+        return super().get_queryset(request).annotate(pot_count=Count('pot_list'))
 
 
 @admin.register(TeaType)

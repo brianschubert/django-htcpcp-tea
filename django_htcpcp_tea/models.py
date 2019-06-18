@@ -29,11 +29,14 @@ class Pot(models.Model):
 
     brew_coffee = models.BooleanField(verbose_name='able to brew coffee', default=True)
 
-    supported_teas = models.ManyToManyField('TeaType', blank=True)
+    supported_teas = models.ManyToManyField('TeaType', blank=True, related_name='pot_list')
 
-    supported_additions = models.ManyToManyField('Addition', blank=True)
+    supported_additions = models.ManyToManyField('Addition', blank=True, related_name='pot_list')
 
     objects = PotQuerySet.as_manager()
+
+    def __str__(self):
+        return '{} - {}'.format(self.id, self.name)
 
     @cached_property
     def tea_capable(self):
@@ -54,6 +57,9 @@ class TeaType(models.Model):
 
     slug = models.SlugField(unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Addition(models.Model):
     """
@@ -72,3 +78,6 @@ class Addition(models.Model):
 
         if 'decaffeinated' in self.name.lower():
             raise ValidationError(error_msg)
+
+    def __str__(self):
+        return self.name
