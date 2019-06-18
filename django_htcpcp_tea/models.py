@@ -6,18 +6,34 @@
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Count
 from django.utils.functional import cached_property
+
+
+class PotQuerySet(models.QuerySet):
+    def _count_relation(self, field, annotation_name):
+        return self.annotate(**{
+            annotation_name: Count(field)
+        })
+
+    def with_tea_count(self):
+        return self._count_relation('supported_teas', 'tea_count')
+
+    def with_addition_count(self):
+        return self._count_relation('supported_additions', 'addition_count')
 
 
 class Pot(models.Model):
     """A Tea- or Coffee Pot capable of brewing a choice beverage."""
     name = models.CharField(max_length=35, unique=True)
 
-    brew_coffee = models.BooleanField(verbose_name='Able to brew coffee?', default=True)
+    brew_coffee = models.BooleanField(verbose_name='able to brew coffee', default=True)
 
     supported_teas = models.ManyToManyField('TeaType', blank=True)
 
     supported_additions = models.ManyToManyField('Addition', blank=True)
+
+    objects = PotQuerySet.as_manager()
 
     @cached_property
     def tea_capable(self):
