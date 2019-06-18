@@ -15,9 +15,9 @@ class Pot(models.Model):
 
     brew_coffee = models.BooleanField(verbose_name='Able to brew coffee?', default=True)
 
-    supported_teas = models.ManyToManyField('TeaType')
+    supported_teas = models.ManyToManyField('TeaType', blank=True)
 
-    supported_additions = models.ManyToManyField('Addition')
+    supported_additions = models.ManyToManyField('Addition', blank=True)
 
     @cached_property
     def tea_capable(self):
