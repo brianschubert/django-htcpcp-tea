@@ -5,17 +5,21 @@
 #  at https://opensource.org/licenses/MIT.
 
 from django.contrib import admin
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Count
 
 from .models import Addition, Pot, TeaType
 
 
-class BrewTeaListFilter(admin.SimpleListFilter):
-    """Admin list filter for whether a pots serves any teas."""
+class RelatedItemsExistsListFilter(admin.SimpleListFilter):
+    """Admin list filter for whether an object has a ManyToMany related item."""
+    related_item_field = None
 
-    title = 'able to brew tea'
-
-    parameter_name = 'brew_tea'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.related_item_field:
+            error_msg = 'The list filter {} does not specify a related_item_field'
+            raise ImproperlyConfigured(error_msg.format(self.__class__.__name__))
 
     def lookups(self, request, model_admin):
         return (
@@ -25,12 +29,31 @@ class BrewTeaListFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         value = self.value()
+        lookup_param = '{}__isnull'.format(self.related_item_field)
 
         if value == 'y':
-            return queryset.filter(supported_teas__isnull=False)
+            return queryset.filter(**{lookup_param: False})
 
         if value == 'n':
-            return queryset.filter(supported_teas__isnull=True)
+            return queryset.filter(**{lookup_param: True})
+
+
+class BrewTeaListFilter(RelatedItemsExistsListFilter):
+    """Admin list filter for whether a pots serves any teas."""
+    title = 'able to brew tea'
+
+    parameter_name = 'brew_tea'
+
+    related_item_field = 'supported_teas'
+
+
+class ServedByAPotListFilter(RelatedItemsExistsListFilter):
+    """Admin list filter for whether an object is served by a pot."""
+    title = 'served by a pot'
+
+    parameter_name = 'is_served'
+
+    related_item_field = 'pot'
 
 
 @admin.register(Pot)
@@ -77,6 +100,8 @@ class PotAdmin(admin.ModelAdmin):
 
 class PotsServingMixin:
     """Mixin to add a 'pots serving' item of a model admin's list_display."""
+
+    list_filter = (ServedByAPotListFilter,)
 
     def get_list_display(self, request):
         fields = super().get_list_display(request)
