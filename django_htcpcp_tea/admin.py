@@ -5,11 +5,14 @@
 #  at https://opensource.org/licenses/MIT.
 
 from django.contrib import admin
+from django.db.models import Count
 
 from .models import Addition, Pot, TeaType
 
 
 class BrewTeaListFilter(admin.SimpleListFilter):
+    """Admin list filter for whether a pots serves any teas."""
+
     title = 'able to brew tea'
 
     parameter_name = 'brew_tea'
@@ -72,8 +75,31 @@ class PotAdmin(admin.ModelAdmin):
         return super().get_queryset(request).with_tea_count().with_addition_count()
 
 
+class PotsServingMixin:
+    """Mixin to add a 'pots serving' item of a model admin's list_display."""
+
+    def get_list_display(self, request):
+        fields = super().get_list_display(request)
+        serving_callable = self.pots_serving_count_view.__name__
+        if serving_callable not in fields:
+            return fields + (serving_callable,)
+        return fields
+
+    def pots_serving_count_view(self, obj):
+        """Display the number of pots that serve the given object."""
+        return obj.pot_count
+
+    pots_serving_count_view.admin_order_field = 'pot_count'
+    pots_serving_count_view.short_description = 'pots serving'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(pot_count=Count('pot'))
+
+
 @admin.register(TeaType)
-class PotAdmin(admin.ModelAdmin):
+class TeaTypeAdmin(PotsServingMixin, admin.ModelAdmin):
+    search_fields = ('name',)
+
     prepopulated_fields = {'slug': ('name',)}
 
     fieldsets = (
@@ -88,5 +114,5 @@ class PotAdmin(admin.ModelAdmin):
 
 
 @admin.register(Addition)
-class PotAdmin(admin.ModelAdmin):
-    pass
+class AdditionAdmin(PotsServingMixin, admin.ModelAdmin):
+    search_fields = ('name',)
