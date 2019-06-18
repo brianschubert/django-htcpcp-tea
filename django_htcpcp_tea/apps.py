@@ -7,6 +7,6 @@
 from django.apps import AppConfig
 
 
-class DjangoHTCPCPTeaConfig(AppConfig):
+class HTCPCPTeaConfig(AppConfig):
     name = 'django_htcpcp_tea'
-    verbose_name = 'Hyper Text Coffee Pot Control Protocol, TEA-capable'
+    verbose_name = 'HTCPCP-TEA Server'
