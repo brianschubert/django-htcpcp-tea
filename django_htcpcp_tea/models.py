@@ -25,13 +25,30 @@ class PotQuerySet(models.QuerySet):
 
 class Pot(models.Model):
     """A Tea- or Coffee Pot capable of brewing a choice beverage."""
-    name = models.CharField(max_length=35, unique=True)
+    name = models.CharField(
+        max_length=35,
+        unique=True,
+        help_text='The name of this pot, e.g. "Joe\'s Joe Jar" or "Breville (R)'
+                  ' BTM800XL"',
+    )
 
-    brew_coffee = models.BooleanField(verbose_name='able to brew coffee', default=True)
+    brew_coffee = models.BooleanField(
+        verbose_name='able to brew coffee',
+        default=True,
+        help_text="Can this pot brew coffee?",
+    )
 
-    supported_teas = models.ManyToManyField('TeaType', blank=True, related_name='pot_list')
+    supported_teas = models.ManyToManyField(
+        'TeaType',
+        blank=True,
+        related_name='pot_list'
+    )
 
-    supported_additions = models.ManyToManyField('Addition', blank=True, related_name='pot_list')
+    supported_additions = models.ManyToManyField(
+        'Addition',
+        blank=True,
+        related_name='pot_list'
+    )
 
     objects = PotQuerySet.as_manager()
 
@@ -66,7 +83,12 @@ class Addition(models.Model):
     A beverage addition that may be specified in the Accept-Additions header
     field of an HTCPCP request.
     """
-    name = models.CharField(max_length=35, unique=True)
+    name = models.CharField(
+        max_length=35,
+        unique=True,
+        help_text="The name of this beverage addition as it would appear in the"
+                  " HTCPCP Accept-Additions header field."
+    )
 
     def clean(self):
         # Calling parent in case it is given a non-empty body in the
