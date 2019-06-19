@@ -17,6 +17,8 @@ class _HTCPCPTeaSettings:
 
     DISABLE_CSRF = True
 
+    GET_ADDITIONS = True
+
     STRICT_MIME_TYPE = True
 
     def __init__(self, settings_prefix):
