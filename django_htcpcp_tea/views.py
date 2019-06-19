@@ -7,7 +7,7 @@
 from functools import wraps
 
 from django.http import BadHeaderError, Http404, HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 from .models import Pot
 from .settings import htcpcp_settings
@@ -28,8 +28,7 @@ def require_htcpcp(func):
 @require_htcpcp
 def brew_pot(request, pot_designator=None, tea_type=None):
     if not pot_designator:
-        # TODO add optional templated content
-        response = HttpResponse('You have options', status=300)
+        response = render(request, 'django_htcpcp_tea/options.html', status=300)
         # TODO add accept-additions handling
         response.htcpcp_accept_additions = []
         return response
@@ -47,10 +46,11 @@ def brew_pot(request, pot_designator=None, tea_type=None):
                 "The HTCPCP server is running with strict content-types "
                 "enabled, but the request's Content-Type was not one of "
                 "( message/coffeepot | message/teapot ). The HTCPCP middleware "
-                "should have invalidated this HTCPCP request in light of this "
+                "should have invalidated this HTCPCP request because of this "
                 "discrepancy. If you are receiving this error on a live server,"
                 " please notify the developers so that this issue can be "
-                "looked into."
+                "looked into. \n"
+                "Received Content-Type: {}".format(request.content_type)
             )
     else:
         # Non-HTCPCP MIME types are allowed, so the HTCPCP version
@@ -69,23 +69,22 @@ def brew_pot(request, pot_designator=None, tea_type=None):
 
 
 def _render_coffee(request, pot):
-    # TODO add templated content for all responses
     # TODO add Accept-Additions handling
     if pot.is_teapot:
-        return HttpResponse('I\'m a tea pot', status=418)
+        return render(request, 'django_htcpcp_tea/418.html', status=418)
 
     if not pot.brew_coffee:
-        return HttpResponse('Pot out of service. No coffee or tea available.', status=503)
+        return render(request, 'django_htcpcp_tea/503.html', status=503)
 
     # TODO "start" / "stop" brewing based on user session for this pot
     # Temporary logic to simulate basic pot functionality
     if request.method == 'WHEN':
-        response = HttpResponse('Milk poured', status=200)  # Ok
-    elif 'stop' in request.body:
+        response = render(request, 'django_htcpcp_tea/finished.html', status=200)  # Ok
+    elif b'stop' in request.body:
         # TODO check for milk in additions
-        response = HttpResponse('Pouring milk, say WHEN', status=100)  # Continue
+        response = render(request, 'django_htcpcp_tea/pouring.html', status=100)  # Continue
     else:
-        response = HttpResponse('Brewing', status=202)  # Accepted
+        response = render(request, 'django_htcpcp_tea/brew_coffee.html', status=202)  # Accepted
     return response
 
 
