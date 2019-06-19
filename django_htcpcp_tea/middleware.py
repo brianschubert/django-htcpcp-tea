@@ -20,5 +20,16 @@ class HTCPCPTeaMiddleware:
         request.htcpcp_valid = request.method in self.valid_methods
 
         response = self.get_response(request)
-        # TODO attach appropriate alternatives header to the response
+
+        try:
+            response['Alternates'] = self.build_alternates(response)
+        except AttributeError:
+            pass
+
         return response
+
+    def build_alternates(self, response):
+        fmt = '{{"{}" {{type {}}}}}'
+        return ','.join(
+            fmt.format(*pair) for pair in response.htcpcp_alternates
+        )
