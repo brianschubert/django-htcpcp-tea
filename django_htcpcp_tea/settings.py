@@ -8,15 +8,28 @@ from django.conf import settings as django_settings
 
 
 class _HTCPCPTeaSettings:
+    """
+    Proxy to the standard Django settings that provides defaults for some
+    of this app's settings.
+    """
+
+    ALLOW_DEPRECATED_POST = True
+
+    DISABLE_CSRF = True
+
+    STRICT_MIME_TYPE = True
 
     def __init__(self, settings_prefix):
         self.prefix = settings_prefix
 
     def __getattribute__(self, item):
         try:
-            return getattr(django_settings, '{}_{}'.format(self.SETTINGS_PREFIX, item))
+            return getattr(django_settings, '{}_{}'.format(
+                object.__getattribute__(self, 'prefix'),
+                item,
+            ))
         except AttributeError:
             return object.__getattribute__(self, item)
 
 
-settings = _HTCPCPTeaSettings('HTCPCP')
+htcpcp_settings = _HTCPCPTeaSettings('HTCPCP')
