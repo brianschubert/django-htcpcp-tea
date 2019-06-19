@@ -37,9 +37,12 @@ def resolve_requested_additions(request):
     Note that the returned additions are not guaranteed to be valid additions
     that are supported by any pot.
     """
-    header = request.META['HTTP_ACCEPT_ADDITIONS']
+    try:
+        header = request.META['HTTP_ACCEPT_ADDITIONS']
+        additions = [addition.strip() for addition in header.split(',')]
+    except KeyError:
+        additions = []
 
-    additions = [addition.strip() for addition in header.split(',')]
     if htcpcp_settings.GET_ADDITIONS:
         additions += request.GET.dict().keys()
 
