@@ -6,11 +6,12 @@
 
 from functools import wraps
 
-from django.http import BadHeaderError, Http404, HttpResponse
+from django.http import BadHeaderError, Http404
 from django.shortcuts import get_object_or_404, render
 
 from .models import Pot
 from .settings import htcpcp_settings
+from .utils import build_alternates
 
 
 def require_htcpcp(func):
@@ -30,7 +31,7 @@ def brew_pot(request, pot_designator=None, tea_type=None):
     if not pot_designator:
         response = render(request, 'django_htcpcp_tea/options.html', status=300)
         # TODO add accept-additions handling
-        response.htcpcp_accept_additions = []
+        response.htcpcp_alternates = build_alternates()
         return response
 
     pot = get_object_or_404(Pot, id=pot_designator)
