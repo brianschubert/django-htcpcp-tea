@@ -19,6 +19,8 @@ class _HTCPCPTeaSettings:
 
     GET_ADDITIONS = True
 
+    POT_SESSIONS = True
+
     STRICT_MIME_TYPE = True
 
     STRICT_REQUEST_BODY = False
