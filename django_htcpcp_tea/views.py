@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render
 
 from .models import Pot
 from .settings import htcpcp_settings
-from .utils import build_alternates
+from .utils import build_alternates, resolve_requested_additions
 
 
 def require_htcpcp(func):
@@ -30,7 +30,6 @@ def require_htcpcp(func):
 def brew_pot(request, pot_designator=None, tea_type=None):
     if not pot_designator:
         response = render(request, 'django_htcpcp_tea/options.html', status=300)
-        # TODO add accept-additions handling
         response.htcpcp_alternates = build_alternates()
         return response
 
@@ -70,12 +69,15 @@ def brew_pot(request, pot_designator=None, tea_type=None):
 
 
 def _render_coffee(request, pot):
-    # TODO add Accept-Additions handling
     if pot.is_teapot:
         return render(request, 'django_htcpcp_tea/418.html', status=418)
 
     if not pot.brew_coffee:
         return render(request, 'django_htcpcp_tea/503.html', status=503)
+
+    additions = resolve_requested_additions(request)
+    if not pot.serves_additions(additions):
+        return render(request, 'django_htcpcp_tea/406.html', status=406)
 
     # TODO "start" / "stop" brewing based on user session for this pot
     # Temporary logic to simulate basic pot functionality

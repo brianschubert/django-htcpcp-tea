@@ -57,11 +57,18 @@ class Pot(models.Model):
 
     @cached_property
     def tea_capable(self):
+        """Return True if this pot can serve tea."""
         return self.supported_teas.exists()
 
     @property
     def is_teapot(self):
+        """Return True if this pot can serve tea, but cannot serve coffee."""
         return self.tea_capable and not self.brew_coffee
+
+    def serves_additions(self, additions):
+        """Return True if this pot can serve the specified additions."""
+        supported = self.supported_additions.values_list('name')
+        return set(additions).issubset(supported)
 
 
 class TeaType(models.Model):
