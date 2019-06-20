@@ -85,21 +85,22 @@ def _render_coffee(request, pot):
 
 
 def _render_teapot(request, pot, tea):
-    if not tea and request.htcpcp_message_type == 'start':
-        # Stop requests sent without a tea type should
-        response = render(request, 'django_htcpcp_tea/options.html', status=300)
-        response.htcpcp_alternates = build_alternates(index_pot=pot)
-        return response
-
-    elif tea not in pot.supported_teas.value_list('name'):
-        return render(
-            request,
-            'django_htcpcp_tea/503.html',
-            {'error_reason': '{} is not available for this pot'.format(tea.capitalize)},
-            status=503,
+    if request.htcpcp_message_type == 'start':
+        # Stop requests sent without a tea type should be respected
+        if not tea:
+            response = render(request, 'django_htcpcp_tea/options.html', status=300)
+            response.htcpcp_alternates = build_alternates(index_pot=pot)
+            return response
+        elif tea not in pot.supported_teas.values_list('name'):
+            return render(
+                request,
+                'django_htcpcp_tea/503.html',
+                {'error_reason': '{} is not available for this pot'.format(tea.capitalize)},
+                status=503,
         )
-
-    return _finalize_beverage(request, pot, '{} Tea'.format(tea.capitalize))
+    # Beverage name only required when starting a new beverage
+    beverage_name = '{} Tea'.format(tea.capitalize) if tea else None
+    return _finalize_beverage(request, pot, beverage_name)
 
 
 def _finalize_beverage(request, pot, beverage_name):
