@@ -4,6 +4,7 @@
 #  MIT License was not distributed with this file, you can obtain one
 #  at https://opensource.org/licenses/MIT.
 
+from datetime import datetime
 from functools import wraps
 
 from django.http import BadHeaderError, Http404
@@ -73,26 +74,90 @@ def _render_coffee(request, pot):
         return render(request, 'django_htcpcp_tea/418.html', status=418)
 
     if not pot.brew_coffee:
-        return render(request, 'django_htcpcp_tea/503.html', status=503)
+        return render(
+            request,
+            'django_htcpcp_tea/503.html',
+            {'error_reason': 'Pot out of service. No coffee or tea available.'},
+            status=503,
+        )
 
+    return _finalize_beverage(request, pot, 'Coffee')
+
+
+def _render_teapot(request, pot, tea):
+    if request.htcpcp_message_type == 'start':
+        # Stop requests sent without a tea type should be respected
+        if not tea:
+            response = render(request, 'django_htcpcp_tea/options.html', status=300)
+            response.htcpcp_alternates = build_alternates(index_pot=pot)
+            return response
+        elif tea not in pot.supported_teas.values_list('name'):
+            return render(
+                request,
+                'django_htcpcp_tea/503.html',
+                {'error_reason': '{} is not available for this pot'.format(tea.capitalize)},
+                status=503,
+        )
+    # Beverage name only required when starting a new beverage
+    beverage_name = '{} Tea'.format(tea.capitalize) if tea else None
+    return _finalize_beverage(request, pot, beverage_name)
+
+
+def _finalize_beverage(request, pot, beverage_name):
     additions = resolve_requested_additions(request)
     if not pot.serves_additions(additions):
         return render(request, 'django_htcpcp_tea/406.html', status=406)
 
-    # TODO "start" / "stop" brewing based on user session for this pot
-    # Temporary logic to simulate basic pot functionality
-    if request.method == 'WHEN':
-        response = render(request, 'django_htcpcp_tea/finished.html', status=200)  # Ok
-    elif b'stop' in request.body:
-        # TODO check for milk in additions
-        response = render(request, 'django_htcpcp_tea/pouring.html', status=100)  # Continue
+    if htcpcp_settings.POT_SESSIONS:
+        session_key = 'htcpcp_pot_{}'.format(pot.id)
+        pot_status = request.session.get(session_key)
+
+        if pot_status:
+            if request.htcpcp_message_type == 'start':
+                response = render(
+                    request,
+                    'django_htcpcp_tea/503.html',
+                    {'error_reason': 'Pot is busy and cannot start a new beverage.'},
+                    status=503,
+                )
+            else:  # htcpcp_message_type == 'stop'
+                # TODO add logic for pouring milk and handling WHEN method
+                # TODO add brew time and additions display to finished tempate
+                response = render(request, 'django_htcpcp_tea/finished.html', status=200)
+                del request.session[session_key]
+        elif request.htcpcp_message_type == 'start':
+            # New session, and the client requested a new beverage
+            response = render(
+                request,
+                'django_htcpcp_tea/brewing.html',
+                {'beverage': beverage_name},
+                status=202,  # Accepted
+            )
+            request.session[session_key] = {
+                'additions': additions,
+                'start_time': datetime.utcnow().timestamp()
+            }
+        else:
+            reason = ("No beverage is being brewed by this pot, but the "
+                      "request did not indicate that a new beverage should be "
+                      "brewed")
+            response = render(request, 'django_htcpcp_tea/400.html', {'error_reason': reason}, status=400)
     else:
-        response = render(request, 'django_htcpcp_tea/brew_coffee.html', status=202)  # Accepted
+        # Simulate stateless pot functionality
+        if request.method == 'WHEN':
+            response = render(request, 'django_htcpcp_tea/finished.html', status=200)  # Ok
+        elif request.htcpcp_message_type == 'stop':
+            # TODO check for milk in additions
+            response = render(request, 'django_htcpcp_tea/pouring.html', status=100)  # Continue
+        else:
+            response = render(
+                request,
+                'django_htcpcp_tea/brewing.html',
+                {'beverage': beverage_name},
+                status=202,  # Accepted
+            )
+
     return response
-
-
-def _render_teapot(request, pot, tea):
-    pass
 
 
 if htcpcp_settings.DISABLE_CSRF:

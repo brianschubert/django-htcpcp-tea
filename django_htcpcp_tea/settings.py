@@ -19,7 +19,11 @@ class _HTCPCPTeaSettings:
 
     GET_ADDITIONS = True
 
+    POT_SESSIONS = True
+
     STRICT_MIME_TYPE = True
+
+    STRICT_REQUEST_BODY = False
 
     def __init__(self, settings_prefix):
         self.prefix = settings_prefix
