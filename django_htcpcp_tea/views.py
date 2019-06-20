@@ -123,6 +123,7 @@ def _finalize_beverage(request, pot, beverage_name):
                 # TODO add logic for pouring milk and handling WHEN method
                 # TODO add brew time and additions display to finished tempate
                 response = render(request, 'django_htcpcp_tea/finished.html', status=200)
+                del request.session[session_key]
         elif request.htcpcp_message_type == 'start':
             # New session, and the client requested a new beverage
             response = render(
