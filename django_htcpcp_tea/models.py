@@ -77,7 +77,12 @@ class TeaType(models.Model):
 
     Per the HTCPCP standard, tea may be available as tea bags or tea leaves.
     """
-    name = models.CharField(verbose_name='Tea name', max_length=35, unique=True)
+    name = models.CharField(
+        verbose_name='Tea name',
+        max_length=35,
+        unique=True,
+        db_index=True,
+    )
 
     slug = models.SlugField(unique=True)
 
