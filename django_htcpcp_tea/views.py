@@ -81,6 +81,28 @@ def _render_coffee(request, pot):
             status=503,
         )
 
+    return _finalize_beverage(request, pot, 'Coffee')
+
+
+def _render_teapot(request, pot, tea):
+    if not tea and request.htcpcp_message_type == 'start':
+        # Stop requests sent without a tea type should
+        response = render(request, 'django_htcpcp_tea/options.html', status=300)
+        response.htcpcp_alternates = build_alternates(index_pot=pot)
+        return response
+
+    elif tea not in pot.supported_teas.value_list('name'):
+        return render(
+            request,
+            'django_htcpcp_tea/503.html',
+            {'error_reason': '{} is not available for this pot'.format(tea.capitalize)},
+            status=503,
+        )
+
+    return _finalize_beverage(request, pot, '{} Tea'.format(tea.capitalize))
+
+
+def _finalize_beverage(request, pot, beverage_name):
     additions = resolve_requested_additions(request)
     if not pot.serves_additions(additions):
         return render(request, 'django_htcpcp_tea/406.html', status=406)
@@ -94,7 +116,7 @@ def _render_coffee(request, pot):
                 response = render(
                     request,
                     'django_htcpcp_tea/503.html',
-                    {'error_reason': 'Coffee pot is busy and cannot start a new beverage.'},
+                    {'error_reason': 'Pot is busy and cannot start a new beverage.'},
                     status=503,
                 )
             else:  # htcpcp_message_type == 'stop'
@@ -103,7 +125,12 @@ def _render_coffee(request, pot):
                 response = render(request, 'django_htcpcp_tea/finished.html', status=200)
         elif request.htcpcp_message_type == 'start':
             # New session, and the client requested a new beverage
-            response = render(request, 'django_htcpcp_tea/brew_coffee.html', status=202)
+            response = render(
+                request,
+                'django_htcpcp_tea/brewing.html',
+                {'beverage': beverage_name},
+                status=202,  # Accepted
+            )
             request.session[session_key] = {
                 'additions': additions,
                 'start_time': datetime.now()  # Use naive datetime since we only care about differences
@@ -117,16 +144,18 @@ def _render_coffee(request, pot):
         # Simulate stateless pot functionality
         if request.method == 'WHEN':
             response = render(request, 'django_htcpcp_tea/finished.html', status=200)  # Ok
-        elif b'stop' in request.body:
+        elif request.htcpcp_message_type == 'stop':
             # TODO check for milk in additions
             response = render(request, 'django_htcpcp_tea/pouring.html', status=100)  # Continue
         else:
-            response = render(request, 'django_htcpcp_tea/brew_coffee.html', status=202)  # Accepted
+            response = render(
+                request,
+                'django_htcpcp_tea/brewing.html',
+                {'beverage': beverage_name},
+                status=202,  # Accepted
+            )
+
     return response
-
-
-def _render_teapot(request, pot, tea):
-    pass
 
 
 if htcpcp_settings.DISABLE_CSRF:
