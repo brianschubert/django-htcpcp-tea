@@ -34,6 +34,14 @@ def brew_pot(request, pot_designator=None, tea_type=None):
         response.htcpcp_alternates = build_alternates()
         return response
 
+    if request.method == 'WHEN' and request.htcpcp_message_type == 'start':
+        return render(
+            request,
+            'django_htcpcp_tea/400.html',
+            {'error_reason': 'Cannot start a beverage with a WHEN request.'},
+            status=400
+        )
+
     pot = get_object_or_404(
         Pot.objects.prefetch_related('supported_additions'),
         id=pot_designator,
@@ -147,18 +155,20 @@ def _finalize_beverage(request, pot, beverage_name):
             response = render(request, 'django_htcpcp_tea/400.html', {'error_reason': reason}, status=400)
     else:
         # Simulate stateless pot functionality
-        if request.method == 'WHEN':
-            response = render(request, 'django_htcpcp_tea/finished.html', status=200)  # Ok
-        elif request.htcpcp_message_type == 'stop':
-            # TODO check for milk in additions
-            response = render(request, 'django_htcpcp_tea/pouring.html', status=100)  # Continue
-        else:
+        if request.htcpcp_message_type == 'start':
             response = render(
                 request,
                 'django_htcpcp_tea/brewing.html',
                 {'beverage': beverage_name},
                 status=202,  # Accepted
             )
+        else:  # request.htcpcp_message_type == 'stop':
+            if request.method == 'WHEN':
+                response = render(request, 'django_htcpcp_tea/finished.html', status=200)  # Ok
+            elif pot.supported_milks.intersection(additions):
+                response = render(request, 'django_htcpcp_tea/pouring.html', status=100)  # Continue
+            else:
+                response = render(request, 'django_htcpcp_tea/finished.html', status=200)  # Ok
 
     return response
 

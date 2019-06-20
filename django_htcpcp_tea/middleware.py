@@ -13,7 +13,7 @@ class HTCPCPTeaMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
-        self.valid_methods = ('BREW',)
+        self.valid_methods = ('BREW', 'WHEN')
         if htcpcp_settings.ALLOW_DEPRECATED_POST:
             self.valid_methods += ('POST',)
 
