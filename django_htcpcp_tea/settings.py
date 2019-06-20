@@ -21,6 +21,8 @@ class _HTCPCPTeaSettings:
 
     STRICT_MIME_TYPE = True
 
+    STRICT_REQUEST_BODY = False
+
     def __init__(self, settings_prefix):
         self.prefix = settings_prefix
 

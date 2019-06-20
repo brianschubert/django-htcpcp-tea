@@ -9,6 +9,8 @@ from .settings import htcpcp_settings
 
 class HTCPCPTeaMiddleware:
 
+    HTCPCP_MESSAGE_KEYWORDS = (b'start', b'stop')
+
     def __init__(self, get_response):
         self.get_response = get_response
         self.valid_methods = ('BREW',)
@@ -16,8 +18,26 @@ class HTCPCPTeaMiddleware:
             self.valid_methods += ('POST',)
 
     def __call__(self, request):
-        # TODO complete HTCPCP validation
-        request.htcpcp_valid = request.method in self.valid_methods
+        htcpcp_valid = True
+
+        if request.method not in self.valid_methods:
+            htcpcp_valid = False
+
+        # Resolve HTCPCP message type (start or stop)
+        if htcpcp_settings.STRICT_REQUEST_BODY:
+            if request.body not in self.HTCPCP_MESSAGE_KEYWORDS:
+                htcpcp_valid = False
+            else:
+                request.htcpcp_message_type = str(request.body)
+        else:
+            for keyword in self.HTCPCP_MESSAGE_KEYWORDS:
+                if keyword in request.body:
+                    request.htcpcp_message_type = str(keyword)
+                    break  # Trigger else branch if no keyword is found
+            else:
+                htcpcp_valid = False
+
+        request.htcpcp_valid = htcpcp_valid
 
         response = self.get_response(request)
 
