@@ -95,11 +95,42 @@ class Addition(models.Model):
     A beverage addition that may be specified in the Accept-Additions header
     field of an HTCPCP request.
     """
+
+    MILK = 'MLK'
+
+    SYRUP = 'SYP'
+
+    SWEETENER = 'SWT'
+
+    SPICE = 'SPC'
+
+    ALCOHOL = 'ACL'
+
+    SUGAR = 'SUG'
+
+    OTHER = 'OTR'
+
+    TYPE_CHOICES = (
+        (MILK, "Milk"),
+        (SYRUP, "Syrup"),
+        (SWEETENER, "Sweetener"),
+        (SPICE, "Spice"),
+        (ALCOHOL, "Alcohol"),
+        (SUGAR, "Sugar"),
+        (OTHER, "Other"),
+    )
+
     name = models.CharField(
         max_length=35,
         unique=True,
         help_text="The name of this beverage addition as it would appear in the"
-                  " HTCPCP Accept-Additions header field."
+                  " HTCPCP Accept-Additions header field.",
+    )
+
+    type = models.CharField(
+        max_length=3,
+        choices=TYPE_CHOICES,
+        verbose_name='Addition type',
     )
 
     def clean(self):
@@ -114,4 +145,4 @@ class Addition(models.Model):
             raise ValidationError(error_msg)
 
     def __str__(self):
-        return self.name
+        return "{} / {}".format(self.get_type_display(), self.name)
