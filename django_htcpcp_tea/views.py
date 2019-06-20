@@ -133,7 +133,7 @@ def _finalize_beverage(request, pot, beverage_name):
             )
             request.session[session_key] = {
                 'additions': additions,
-                'start_time': datetime.now()  # Use naive datetime since we only care about differences
+                'start_time': datetime.utcnow().timestamp()
             }
         else:
             reason = ("No beverage is being brewed by this pot, but the "
