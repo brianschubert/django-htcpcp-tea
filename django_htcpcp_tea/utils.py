@@ -7,6 +7,7 @@
 from django.urls import reverse
 
 from .models import Pot
+from .settings import htcpcp_settings
 
 
 def build_alternates(index_pot=None):
@@ -23,3 +24,26 @@ def build_alternates(index_pot=None):
             yield (reverse('pot-detail', args=[pot.id]), 'message/coffeepot')
         for tea in pot.supported_teas.all():
             yield (reverse('pot-detail-tea', args=[pot.id, tea.slug]), 'message/teapot')
+
+
+def resolve_requested_additions(request):
+    """
+    Return to requested additions for the provided request.
+
+    Additions may be requested in the ``Accept-Additions`` header field, or
+    (if the ``HTCPCP_GET_ADDITIONS`` settings is enabled) in the query string
+    of a uri.
+
+    Note that the returned additions are not guaranteed to be valid additions
+    that are supported by any pot.
+    """
+    try:
+        header = request.META['HTTP_ACCEPT_ADDITIONS']
+        additions = [addition.strip() for addition in header.split(',')]
+    except KeyError:
+        additions = []
+
+    if htcpcp_settings.GET_ADDITIONS:
+        additions += request.GET.dict().keys()
+
+    return additions
