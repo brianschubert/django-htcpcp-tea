@@ -71,15 +71,15 @@ def brew_pot(request, pot_designator=None, tea_type=None):
 
 def _render_coffee(request, pot):
     if pot.is_teapot:
-        return render(
-            request,
-            'django_htcpcp_tea/418.html',
-            {'error_reason': 'Pot out of service. No coffee or tea available.'},
-            status=418,
-        )
+        return render(request, 'django_htcpcp_tea/418.html', status=418)
 
     if not pot.brew_coffee:
-        return render(request, 'django_htcpcp_tea/503.html', status=503)
+        return render(
+            request,
+            'django_htcpcp_tea/503.html',
+            {'error_reason': 'Pot out of service. No coffee or tea available.'},
+            status=503,
+        )
 
     additions = resolve_requested_additions(request)
     if not pot.serves_additions(additions):
