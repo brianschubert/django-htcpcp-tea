@@ -34,7 +34,10 @@ def brew_pot(request, pot_designator=None, tea_type=None):
         response.htcpcp_alternates = build_alternates()
         return response
 
-    pot = get_object_or_404(Pot, id=pot_designator)
+    pot = get_object_or_404(
+        Pot.objects.prefetch_related('supported_additions'),
+        id=pot_designator,
+    )
 
     if htcpcp_settings.STRICT_MIME_TYPE:
         # Use the request's MIME type to unambiguously categorize the request

@@ -65,9 +65,24 @@ class Pot(models.Model):
         """Return True if this pot can serve tea, but cannot serve coffee."""
         return self.tea_capable and not self.brew_coffee
 
+    @cached_property
+    def supported_milks(self):
+        """
+        Return the set of names of the milk-type Additions that this pots
+        supports.
+        """
+        # Perform the filtering for milk-type additions in Python so that this
+        # method will makes use of a cached query set (perhaps from a call to
+        # QuerySet.prefetch_related()), if one exists.
+        return set(a.name for a in self.supported_additions.all() if a.type == Addition.MILK)
+
     def serves_additions(self, additions):
         """Return True if this pot can serve the specified additions."""
-        supported = self.supported_additions.values_list('name')
+        # Select Addition names using a generator instead of calling
+        # QuerySet.values_list() so that this method will makes use of a
+        # cached query set (perhaps from a call to QuerySet.prefetch_related()),
+        # if one exists.
+        supported = (a.name for a in self.supported_additions.all())
         return set(additions).issubset(supported)
 
 
