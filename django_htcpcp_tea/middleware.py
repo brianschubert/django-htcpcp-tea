@@ -28,11 +28,11 @@ class HTCPCPTeaMiddleware:
             if request.body not in self.HTCPCP_MESSAGE_KEYWORDS:
                 htcpcp_valid = False
             else:
-                request.htcpcp_message_type = str(request.body)
+                request.htcpcp_message_type = request.body.decode(encoding='utf-8')
         else:
             for keyword in self.HTCPCP_MESSAGE_KEYWORDS:
                 if keyword in request.body:
-                    request.htcpcp_message_type = str(keyword)
+                    request.htcpcp_message_type = keyword.decode(encoding='utf-8')
                     break  # Trigger else branch if no keyword is found
             else:
                 htcpcp_valid = False
