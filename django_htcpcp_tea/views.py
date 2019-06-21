@@ -7,7 +7,7 @@
 from datetime import datetime
 from functools import wraps
 
-from django.http import BadHeaderError, Http404
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
 from .models import Pot
@@ -47,40 +47,51 @@ def brew_pot(request, pot_designator=None, tea_type=None):
         id=pot_designator,
     )
 
-    if htcpcp_settings.STRICT_MIME_TYPE:
-        # Use the request's MIME type to unambiguously categorize the request
-        if request.content_type == 'message/coffeepot':
-            return _render_coffee(request, pot)
-        elif request.content_type == 'message/teapot':
-            return _render_teapot(request, pot, tea_type)
-        else:
-            raise BadHeaderError(
-                "The HTCPCP server is running with strict content-types "
-                "enabled, but the request's Content-Type was not one of "
-                "( message/coffeepot | message/teapot ). The HTCPCP middleware "
-                "should have invalidated this HTCPCP request because of this "
-                "discrepancy. If you are receiving this error on a live server,"
-                " please notify the developers so that this issue can be "
-                "looked into. \n"
-                "Received Content-Type: {}".format(request.content_type)
-            )
+    if _request_for_tea(request, tea_type):
+        response = _precheck_teapot(request, pot, tea_type)
+        # Beverage name only required when starting a new beverage
+        beverage_name = '{} Tea'.format(tea_type.capitalize) if tea_type else None
     else:
-        # Non-HTCPCP MIME types are allowed, so the HTCPCP version
-        # must be inferred
-        if tea_type:
-            # Assume HTCPCP-TEA request, since a tea type was specified
-            return _render_teapot(request, pot, tea_type)
+        response = _precheck_coffee(request, pot)
+        beverage_name = 'Coffee'
+
+    if response is None:
+        additions = resolve_requested_additions(request)
+        if not pot.serves_additions(additions):
+            return render(request, 'django_htcpcp_tea/406.html', status=406)
+
+        if htcpcp_settings.POT_SESSIONS:
+            response = _finalize_beverage_with_session(request, pot, beverage_name, additions)
         else:
-            # Either a standard HTCPCP request, or a HTCPCP-TEA index request
-            if request.content_type == 'message/teapot':
-                return _render_teapot(request, pot, tea_type)
-            else:
-                # Default to standard HTCPCP specification.
-                # Let's brew some COFFEE!
-                return _render_coffee(request, pot)
+            response = _finalize_beverage(request, pot, beverage_name, additions)
+
+    return response
 
 
-def _render_coffee(request, pot):
+def _request_for_tea(request, tea_type):
+    """
+    Determine whether the given request is for tea.
+
+    If the ``STRICT_MIME_TYPE`` settings is enabled, then the MIME type of the
+    request is used to unambiguously categorize it as a tea or coffee request.
+
+    If strict MIME types are not enforced, the requested beverage type is
+    inferred from the existence of a tea type in the request URI and the HTCPCP
+    MIME type, if one is provided.
+    """
+    if request.content_type == 'message/teapot':
+        return True
+    elif not htcpcp_settings.STRICT_MIME_TYPE:
+        return tea_type
+    else:
+        return False
+
+
+def _precheck_coffee(request, pot):
+    """
+    Return a response if a precondition for coffee requests is not satisfied,
+    else None.
+    """
     if pot.is_teapot:
         return render(request, 'django_htcpcp_tea/418.html', status=418)
 
@@ -92,13 +103,16 @@ def _render_coffee(request, pot):
             status=503,
         )
 
-    return _finalize_beverage(request, pot, 'Coffee')
+    return None
 
 
-def _render_teapot(request, pot, tea):
+def _precheck_teapot(request, pot, tea):
+    """
+    Return a response if a precondition for tea requests is not satisfied, else
+    None.
+    """
     if request.htcpcp_message_type == 'start':
-        # Stop requests sent without a tea type should be respected
-        if not tea:
+        if not tea:  # Require tea type only when starting a new beverage
             response = render(request, 'django_htcpcp_tea/options.html', status=300)
             response.htcpcp_alternates = build_alternates(index_pot=pot)
             return response
@@ -109,38 +123,37 @@ def _render_teapot(request, pot, tea):
                 {'error_reason': '{} is not available for this pot'.format(tea.capitalize)},
                 status=503,
             )
-    # Beverage name only required when starting a new beverage
-    beverage_name = '{} Tea'.format(tea.capitalize) if tea else None
-    return _finalize_beverage(request, pot, beverage_name)
+    return None
 
 
-def _finalize_beverage(request, pot, beverage_name):
-    additions = resolve_requested_additions(request)
-    if not pot.serves_additions(additions):
-        return render(request, 'django_htcpcp_tea/406.html', status=406)
-
-    if htcpcp_settings.POT_SESSIONS:
-        response = _finalize_beverage_with_session(request, pot, beverage_name, additions)
-    else:  # Simulate stateless pot functionality
-        if request.htcpcp_message_type == 'start':
-            response = render(
-                request,
-                'django_htcpcp_tea/brewing.html',
-                {'beverage': beverage_name},
-                status=202,  # Accepted
-            )
-        else:  # request.htcpcp_message_type == 'stop':
-            if request.method == 'WHEN':
-                response = render(request, 'django_htcpcp_tea/finished.html', status=201)  # Created
-            elif pot.supported_milks.intersection(additions):
-                response = render(request, 'django_htcpcp_tea/pouring.html', status=200)  # Ok
-            else:
-                response = render(request, 'django_htcpcp_tea/finished.html', status=201)  # Created
+def _finalize_beverage(request, pot, beverage_name, additions):
+    """
+    Return a response to the beverage request according to the HTCPCP standard
+    without referencing the user's session.
+    """
+    if request.htcpcp_message_type == 'start':
+        response = render(
+            request,
+            'django_htcpcp_tea/brewing.html',
+            {'beverage': beverage_name},
+            status=202,  # Accepted
+        )
+    else:  # request.htcpcp_message_type == 'stop':
+        if request.method == 'WHEN':
+            response = render(request, 'django_htcpcp_tea/finished.html', status=201)  # Created
+        elif pot.supported_milks.intersection(additions):
+            response = render(request, 'django_htcpcp_tea/pouring.html', status=200)  # Ok
+        else:
+            response = render(request, 'django_htcpcp_tea/finished.html', status=201)  # Created
 
     return response
 
 
 def _finalize_beverage_with_session(request, pot, beverage_name, additions):
+    """
+    Return a response to the beverage request according to the HTCPCP standard
+    by referencing the current state of the user's session.
+    """
     session_key = 'htcpcp_pot_{}'.format(pot.id)
     pot_status = request.session.get(session_key)
 
