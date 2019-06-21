@@ -38,7 +38,7 @@ setup(
     description="Django app implementing HTCPCP-TEA as defined in RFC 7168.",
     long_description=long_description,
     long_description_content_type='text/x-rst',
-    keywords=['htcpcp', 'django', 'rfc 2324', 'rfc 7168', 'coffee', 'tea'],
+    keywords="htcpcp django rfc-2324 rfc-7168 coffee tea",
     classifiers=CLASSIFIERS,
     install_requires=['django>=2.0'],
     python_requires='>=3',
