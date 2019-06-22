@@ -1,0 +1,6 @@
+<ul>{% spaceless %}
+    {% for alt in alternatives %}
+        <li><a href="{{ alt.0 }}">{{ alt.0 }}</a> (type {{ alt.1 }})</li>
+    {% endfor %}
+{% endspaceless %}</ul>
+

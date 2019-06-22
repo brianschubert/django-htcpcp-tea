@@ -1,6 +1,6 @@
-{% extends "django_htcpcp_tea/base.html" %}
+{% extends "django_htcpcp_tea/base_beverage.html" %}
 
 {% block htcpcp_content %}
-    {# TODO render entity altneratives #}
-    You have options
+    <h1>Options</h1>
+    {% include "django_htcpcp_tea/includes/alternatives.html" %}
 {% endblock %}
