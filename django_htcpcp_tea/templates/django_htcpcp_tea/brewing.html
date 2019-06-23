@@ -3,10 +3,10 @@
 {% block htcpcp_content %}
     <p>Brewing {{ beverage }}...</p>
 
-{#    {% if additions %}#}
-{#        <h2>Additions</h2>#}
-{#        {% include "django_htcpcp_tea/includes/additions.html" %}#}
-{#    {% endif %}#}
+    {% if additions %}
+        <h2>Additions</h2>
+        {% include "django_htcpcp_tea/includes/additions.html" %}
+    {% endif %}
     {% if alternatives %}
         <h2>Alternatives, in case you change your mind...</h2>
         {# RFC 7168 requires alternatives to be listed when coffee is #}

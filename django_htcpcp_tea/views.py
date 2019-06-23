@@ -59,7 +59,7 @@ def brew_pot(request, pot_designator=None, tea_type=None):
         except Addition.DoesNotExist:
             # Fetch all supported additions for the requested pot.
             # Note that this will result in an additional query.
-            context = {'supported_additions': pot.supported_additions}
+            context = {'supported_additions': pot.supported_additions.all()}
             return render(request, 'django_htcpcp_tea/406.html', context, status=406)
 
         if htcpcp_settings.POT_SESSIONS:
@@ -215,7 +215,7 @@ def _finalize_beverage_with_session(request, pot, beverage_name, additions):
             # Serialize the requested additions to as dictionaries for storage
             # in the user's session since we do not need actual Addition objects
             # to display the additions during future requests.
-            'additions': [{'name': a.name, 'type': a.get_type_display()} for a in additions],
+            'additions': [{'name': a.name, 'get_type_display': a.get_type_display()} for a in additions],
             'needs_milk': any(addition.is_milk for addition in additions),
             'currently_pouring': False,
             'start_time': datetime.utcnow().timestamp()

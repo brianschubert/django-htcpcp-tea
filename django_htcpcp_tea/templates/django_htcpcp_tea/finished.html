@@ -2,10 +2,11 @@
 
 {% block htcpcp_content %}
     <p>Finished brewing your {{ beverage }}. Please come and collect your beverage.</p>
-{#    <h2>Additions</h2>#}
-{#    {% if additions %}#}
-{#        {% include "django_htcpcp_tea/includes/additions.html" %}#}
-{#    {% else %}#}
-{#        <p>Your beverage has no additions.</p>#}
-{#    {% endif %}#}
+
+    <h2>Additions</h2>
+    {% if additions %}
+        {% include "django_htcpcp_tea/includes/additions.html" %}
+    {% else %}
+        <p>Your beverage has no additions.</p>
+    {% endif %}
 {% endblock %}
