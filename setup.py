@@ -5,10 +5,12 @@
 #  MIT License was not distributed with this file, you can obtain one
 #  at https://opensource.org/licenses/MIT.
 
+import os
+
 from setuptools import find_packages, setup
 
-with open('README.rst') as readme:
-    long_description = readme.read()
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
+    README = readme.read()
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
@@ -30,13 +32,14 @@ CLASSIFIERS = [
 
 setup(
     name='django-htcpcp-tea',
-    version='0.1.0',
+    version='0.1.1',
     packages=find_packages(),
+    include_package_data=True,
     license='MIT',
     author='Brian Schubert',
     url='https://github.com/blueschu/django-htcpcp-tea',
     description="Django app implementing HTCPCP-TEA as defined in RFC 7168.",
-    long_description=long_description,
+    long_description=README,
     long_description_content_type='text/x-rst',
     keywords="htcpcp django rfc-2324 rfc-7168 coffee tea",
     classifiers=CLASSIFIERS,
