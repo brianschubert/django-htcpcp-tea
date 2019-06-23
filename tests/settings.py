@@ -7,6 +7,7 @@
 SECRET_KEY = 'supr-s3krit-kee'
 
 INSTALLED_APPS = [
+    "django_htcpcp_tea",
 ]
 
 # Use in-memory SQLite database for tests
