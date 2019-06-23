@@ -65,25 +65,21 @@ class Pot(models.Model):
         """Return True if this pot can serve tea, but cannot serve coffee."""
         return self.tea_capable and not self.brew_coffee
 
-    @cached_property
-    def supported_milks(self):
+    def fetch_additions(self, addition_names):
         """
-        Return the set of names of the milk-type Additions that this pots
-        supports.
-        """
-        # Perform the filtering for milk-type additions in Python so that this
-        # method will makes use of a cached query set (perhaps from a call to
-        # QuerySet.prefetch_related()), if one exists.
-        return set(a.name for a in self.supported_additions.all() if a.type == Addition.MILK)
+        Return the Additions that this pot supports whose names are in the
+        provided sequence.
 
-    def serves_additions(self, additions):
-        """Return True if this pot can serve the specified additions."""
-        # Select Addition names using a generator instead of calling
-        # QuerySet.values_list() so that this method will makes use of a
-        # cached query set (perhaps from a call to QuerySet.prefetch_related()),
-        # if one exists.
-        supported = (a.name for a in self.supported_additions.all())
-        return set(additions).issubset(supported)
+        If this pot does not support an Addition whose name is provided, raise
+        an Addition.DoesNotExist error.
+        """
+        additions = self.supported_additions.filter(name__in=addition_names)
+        # Resolve the query set to compute its length.
+        # Replace this len() call with a queryset annotation if further
+        # filtering becomes necessary.
+        if len(addition_names) != len(additions):
+            raise Addition.DoesNotExist
+        return additions
 
 
 class TeaType(models.Model):
@@ -161,3 +157,7 @@ class Addition(models.Model):
 
     def __str__(self):
         return "{} / {}".format(self.get_type_display(), self.name)
+
+    @property
+    def is_milk(self):
+        return self.type == self.MILK
