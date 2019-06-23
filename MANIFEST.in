@@ -1,0 +1,6 @@
+# Text files
+include README.rst
+include LICENSE
+
+# Django templates
+recursive-include django_htcpcp_tea/templates *

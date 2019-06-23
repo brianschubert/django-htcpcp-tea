@@ -32,6 +32,7 @@ setup(
     name='django-htcpcp-tea',
     version='0.1.1',
     packages=find_packages(),
+    include_package_data=True,
     license='MIT',
     author='Brian Schubert',
     url='https://github.com/blueschu/django-htcpcp-tea',
