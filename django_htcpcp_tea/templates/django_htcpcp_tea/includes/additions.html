@@ -1,0 +1,14 @@
+<dl>{% spaceless %}
+    {% regroup additions by get_type_display as addition_types %}
+    {% for type in addition_types %}
+        <dt>{{ type.grouper }}</dt>
+        <dd>
+            <ul>
+                {% for addition in type.list %}
+                    <li>{{ addition.name }}</li>
+                {% endfor %}
+            </ul>
+        </dd>
+    {% endfor %}
+{% endspaceless %}</dl>
+

@@ -1,5 +1,16 @@
-{% extends "django_htcpcp_tea/base.html" %}
+{% extends "django_htcpcp_tea/base_beverage.html" %}
 
 {% block htcpcp_content %}
-    Brewing {{ beverage }}...
+    <p>Brewing {{ beverage }}...</p>
+
+    {% if additions %}
+        <h2>Additions</h2>
+        {% include "django_htcpcp_tea/includes/additions.html" %}
+    {% endif %}
+    {% if alternatives %}
+        <h2>Alternatives, in case you change your mind...</h2>
+        {# RFC 7168 requires alternatives to be listed when coffee is #}
+        {# brewed incase the user wants to brew a superior beverage #}
+        {% include "django_htcpcp_tea/includes/alternatives.html" %}
+    {% endif %}
 {% endblock %}
