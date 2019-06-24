@@ -33,7 +33,7 @@ CLASSIFIERS = [
 setup(
     name='django-htcpcp-tea',
     version='0.1.2',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     include_package_data=True,
     license='MIT',
     author='Brian Schubert',
@@ -45,4 +45,5 @@ setup(
     classifiers=CLASSIFIERS,
     install_requires=['django>=2.0'],
     python_requires='>=3',
+    test_suite='runtests.run_tests',
 )
