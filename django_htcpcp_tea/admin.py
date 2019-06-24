@@ -101,14 +101,15 @@ class PotAdmin(admin.ModelAdmin):
 class PotsServingMixin:
     """Mixin to add a 'pots serving' item of a model admin's list_display."""
 
-    list_filter = (ServedByAPotListFilter,)
-
     def get_list_display(self, request):
         fields = super().get_list_display(request)
         serving_callable = self.pots_serving_count_view.__name__
         if serving_callable not in fields:
             return fields + (serving_callable,)
         return fields
+
+    def get_list_filter(self, request):
+        return (ServedByAPotListFilter,) + super().get_list_filter(request)
 
     def pots_serving_count_view(self, obj):
         """Display the number of pots that serve the given object."""
@@ -141,5 +142,9 @@ class TeaTypeAdmin(PotsServingMixin, admin.ModelAdmin):
 @admin.register(Addition)
 class AdditionAdmin(PotsServingMixin, admin.ModelAdmin):
     search_fields = ('name',)
+
+    list_display = ('name', 'type')
+
+    list_filter = ('type',)
 
     radio_fields = {'type': admin.HORIZONTAL}
