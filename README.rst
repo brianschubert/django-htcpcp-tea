@@ -25,6 +25,13 @@ Django HTCPCP-TEA
     :target: ./LICENSE
     :alt: License
 
+..
+
+    [T]here is a strong, dark, rich requirement for a protocol designed
+    espressoly for the brewing of coffee.
+
+    --- RFC 2324 Section 1
+
 A Django app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
 
 .. _RFC 7168: https://tools.ietf.org/html/rfc7168
