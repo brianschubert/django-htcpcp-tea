@@ -1,6 +1,14 @@
 django-htcpcp-tea
 =================
 
+.. image:: https://travis-ci.com/blueschu/django-htcpcp-tea.svg?branch=master
+    :target: https://travis-ci.com/blueschu/django-htcpcp-tea
+    :alt: Travis CI Build
+
+.. image:: https://coveralls.io/repos/github/blueschu/django-htcpcp-tea/badge.svg?branch=master
+    :target: https://coveralls.io/github/blueschu/django-htcpcp-tea?branch=master
+    :alt: Coverage
+
 .. image:: https://img.shields.io/pypi/pyversions/django-htcpcp-tea.svg
     :alt: PyPI - Python Version
 
