@@ -196,11 +196,11 @@ def _finalize_beverage_with_session(request, pot, beverage_name, additions):
                         request, 'django_htcpcp_tea/400.html', context, status=400)
                 elif pot_status['needs_milk']:  # Stop brewing and begin pouring milk
                     response = render(request, 'django_htcpcp_tea/pouring.html', context, status=200)
-                    request.session[session_key] = {
-                        **pot_status,
+                    request.session[session_key].update({
                         'needs_milk': False,
                         'currently_pouring': True,
-                    }
+                    })
+                    request.session.modified = True
                 else:  # Stop brewing. No milk required.
                     response = render(request, 'django_htcpcp_tea/finished.html', context, status=201)
                     del request.session[session_key]
