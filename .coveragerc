@@ -1,0 +1,6 @@
+[run]
+branch = true
+source = django_htcpcp_tea
+
+[report]
+omit = *migrations*
