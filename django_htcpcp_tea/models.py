@@ -13,7 +13,7 @@ from django.utils.functional import cached_property
 class PotQuerySet(models.QuerySet):
     def _count_relation(self, field, annotation_name):
         return self.annotate(**{
-            annotation_name: Count(field)
+            annotation_name: Count(field, distinct=True)
         })
 
     def with_tea_count(self):
