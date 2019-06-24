@@ -9,10 +9,16 @@ django-htcpcp-tea
     :target: https://coveralls.io/github/blueschu/django-htcpcp-tea?branch=master
     :alt: Coverage
 
+.. image:: https://readthedocs.org/projects/django-htcpcp-tea/badge/?version=latest
+    :target: https://django-htcpcp-tea.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 .. image:: https://img.shields.io/pypi/pyversions/django-htcpcp-tea.svg
+    :target: https://pypi.org/project/django-htcpcp-tea/
     :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/pypi/djversions/django-htcpcp-tea.svg
+    :target: https://pypi.org/project/django-htcpcp-tea/
     :alt: PyPI - Django Version
 
 .. image:: https://img.shields.io/github/license/blueschu/django-htcpcp-tea.svg
@@ -22,6 +28,13 @@ django-htcpcp-tea
 A Django app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
 
 .. _RFC 7168: https://tools.ietf.org/html/rfc7168
+
+Documentation
+-------------
+
+Documentation for django-htcpcp-tea is available on `Read the Docs`_.
+
+.. _Read the Docs: https://django-htcpcp-tea.readthedocs.io/en/latest/?badge=latest
 
 References
 ----------

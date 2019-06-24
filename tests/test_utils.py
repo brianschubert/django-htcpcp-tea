@@ -42,15 +42,15 @@ class UtilsStatelessTests(unittest.TestCase):
     def test_resolve_requested_additions_header_and_get(self):
         request = self.rf.post('/?Milk&Vanilla', HTTP_ACCEPT_ADDITIONS='Sugar, Half-and-Half')
         self.assertEqual(
-            utils.resolve_requested_additions(request),
-            ['Sugar', 'Half-and-Half', 'Milk', 'Vanilla']
+            sorted(utils.resolve_requested_additions(request)),
+            sorted(['Sugar', 'Half-and-Half', 'Milk', 'Vanilla'])
         )
 
     @override_settings(HTCPCP_GET_ADDITIONS=True)
     def test_resolve_requested_additions_empty_header_and_get(self):
         request = self.rf.post('/?Milk&Vanilla')
         self.assertEqual(
-            utils.resolve_requested_additions(request),
+            sorted(utils.resolve_requested_additions(request)),
             ['Milk', 'Vanilla']
         )
 
