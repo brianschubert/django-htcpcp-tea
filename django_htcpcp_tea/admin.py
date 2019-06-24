@@ -143,4 +143,8 @@ class TeaTypeAdmin(PotsServingMixin, admin.ModelAdmin):
 class AdditionAdmin(PotsServingMixin, admin.ModelAdmin):
     search_fields = ('name',)
 
+    list_display = ('name', 'type')
+
+    list_filter = ('type',)
+
     radio_fields = {'type': admin.HORIZONTAL}
