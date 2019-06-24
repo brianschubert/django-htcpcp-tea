@@ -32,9 +32,19 @@ Django HTCPCP-TEA
 
     --- RFC 2324 Section 1
 
-A Django app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
+A `Django`_ app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
+
+This app extends the Django web framework to simulate the functionality of an HTCPCP server. Both the HTCPCP/1.0 protocol from `RFC 2324`_ and the HTCPCP-TEA protocol from `RFC 7168`_ are supported.
 
 .. _RFC 7168: https://tools.ietf.org/html/rfc7168
+.. _Django: https://www.djangoproject.com/
+.. _RFC 2324: https://tools.ietf.org/html/rfc2324
+
+Notable features:
+
+- Customizable coffee and teapots
+- Support for BREW and WHEN HTTP methods
+- HTCPCP response codes (e.g. 418 I'm a teapot)
 
 Documentation
 -------------
