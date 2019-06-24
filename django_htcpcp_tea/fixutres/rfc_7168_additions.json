@@ -1,0 +1,1 @@
+[{"model": "django_htcpcp_tea.addition", "pk": 15, "fields": {"name": "Sugar", "type": "SUG"}}, {"model": "django_htcpcp_tea.addition", "pk": 16, "fields": {"name": "Xylitol", "type": "SUG"}}, {"model": "django_htcpcp_tea.addition", "pk": 17, "fields": {"name": "Stevia", "type": "SUG"}}]

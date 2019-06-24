@@ -4,3 +4,4 @@ include LICENSE
 
 # Django templates
 recursive-include django_htcpcp_tea/templates *
+recursive-include django_htcpcp_tea/fixtures *
