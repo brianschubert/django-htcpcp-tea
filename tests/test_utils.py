@@ -6,8 +6,12 @@
 
 import unittest
 
-from django.test import RequestFactory, override_settings
-from django_htcpcp_tea import utils
+from django.test import RequestFactory, TestCase, override_settings
+from django_htcpcp_tea import urls, utils
+from django_htcpcp_tea.models import Pot
+
+# URL patterns for UtilsTests
+urlpatterns = urls.urlpatterns
 
 
 class UtilsStatelessTests(unittest.TestCase):
@@ -63,4 +67,51 @@ class UtilsStatelessTests(unittest.TestCase):
         self.assertEqual(
             utils.resolve_requested_additions(request),
             ['Sugar', 'Half-and-Half', 'Milk']
+        )
+
+
+@override_settings(ROOT_URLCONF=__name__)
+class UtilsTests(TestCase):
+    fixtures = ['demo_pots', 'rfc_2324_additions', 'rfc_7168_teas']
+
+    def test_build_alternates_no_pot(self):
+        alternates = list(utils.build_alternates())
+
+        expected = [
+            ('/pot-1/', 'message/coffeepot'),
+            ('/pot-2/', 'message/coffeepot'),
+            ('/pot-3/darjeeling/', 'message/teapot'),
+            ('/pot-3/earl-grey/', 'message/teapot'),
+            ('/pot-3/peppermint/', 'message/teapot'),
+            ('/pot-4/', 'message/coffeepot'),
+            ('/pot-4/darjeeling/', 'message/teapot'),
+            ('/pot-4/earl-grey/', 'message/teapot'),
+            ('/pot-4/peppermint/', 'message/teapot')
+        ]
+
+        self.assertEqual(
+            alternates,
+            expected,
+        )
+
+    def test_build_alternates_for_pot_no_tea(self):
+        pot = Pot.objects.get(pk=1)
+        alternates = list(utils.build_alternates(index_pot=pot))
+
+        self.assertEqual(
+            alternates,
+            [('/pot-1/', 'message/coffeepot')]
+        )
+
+    def test_build_alternates_for_pot_with_tea(self):
+        pot = Pot.objects.get(pk=3)
+        alternates = list(utils.build_alternates(index_pot=pot))
+
+        self.assertEqual(
+            alternates,
+            [
+                ('/pot-3/darjeeling/', 'message/teapot'),
+                ('/pot-3/earl-grey/', 'message/teapot'),
+                ('/pot-3/peppermint/', 'message/teapot'),
+            ]
         )
