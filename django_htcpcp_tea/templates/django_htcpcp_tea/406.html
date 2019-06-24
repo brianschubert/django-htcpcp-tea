@@ -1,7 +1,14 @@
-{% extends "django_htcpcp_tea/base.html" %}
+{% extends "django_htcpcp_tea/base_error.html" %}
 
-{% block htcpcp_content %}
-    <h1>406 Not Acceptable</h1>
+{% block error_title %}406 Not Acceptable{% endblock %}
+
+{% block error_body %}
     <p>The operator of the coffee pot cannot comply with the requested additions.</p>
-    {# TODO render list of acceptable additions #}
+
+    {% if supported_additions %}
+        <h2>Acceptable Additions</h2>
+        {% include "django_htcpcp_tea/includes/additions.html" with additions=supported_additions %}
+    {% else %}
+        <p>This pot does not support beverage additions.</p>
+    {% endif %}
 {% endblock %}

@@ -1,0 +1,1 @@
+[{"model": "django_htcpcp_tea.teatype", "pk": 1, "fields": {"name": "Darjeeling", "slug": "darjeeling"}}, {"model": "django_htcpcp_tea.teatype", "pk": 2, "fields": {"name": "Earl Grey", "slug": "earl-grey"}}, {"model": "django_htcpcp_tea.teatype", "pk": 3, "fields": {"name": "Peppermint", "slug": "peppermint"}}]
