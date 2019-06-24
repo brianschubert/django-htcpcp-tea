@@ -10,9 +10,11 @@ django-htcpcp-tea
     :alt: Coverage
 
 .. image:: https://img.shields.io/pypi/pyversions/django-htcpcp-tea.svg
+    :target: https://pypi.org/project/django-htcpcp-tea/
     :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/pypi/djversions/django-htcpcp-tea.svg
+    :target: https://pypi.org/project/django-htcpcp-tea/
     :alt: PyPI - Django Version
 
 .. image:: https://img.shields.io/github/license/blueschu/django-htcpcp-tea.svg
