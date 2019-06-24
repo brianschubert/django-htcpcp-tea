@@ -1,6 +1,16 @@
 django-htcpcp-tea
 =================
 
+.. image:: https://img.shields.io/pypi/pyversions/django-htcpcp-tea.svg
+    :alt: PyPI - Python Version
+
+.. image:: https://img.shields.io/pypi/djversions/django-htcpcp-tea.svg
+    :alt: PyPI - Django Version
+
+.. image:: https://img.shields.io/github/license/blueschu/django-htcpcp-tea.svg
+    :target: ./LICENSE
+    :alt: License
+
 A Django app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
 
 .. _RFC 7168: https://tools.ietf.org/html/rfc7168
