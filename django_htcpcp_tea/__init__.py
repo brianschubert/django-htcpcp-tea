@@ -4,6 +4,6 @@
 #  MIT License was not distributed with this file, you can obtain one
 #  at https://opensource.org/licenses/MIT.
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 default_app_config = 'django_htcpcp_tea.apps.HTCPCPTeaConfig'
