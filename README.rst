@@ -1,4 +1,4 @@
-django-htcpcp-tea
+Django HTCPCP-TEA
 =================
 
 .. image:: https://travis-ci.com/blueschu/django-htcpcp-tea.svg?branch=master
@@ -32,7 +32,7 @@ A Django app that implements the TEA extension to HTCPCP as defined in `RFC 7168
 Documentation
 -------------
 
-Documentation for django-htcpcp-tea is available on `Read the Docs`_.
+Documentation for Django HTCPCP-TEA is available on `Read the Docs`_.
 
 .. _Read the Docs: https://django-htcpcp-tea.readthedocs.io/en/latest/?badge=latest
 
@@ -42,12 +42,12 @@ References
 - `[RFC 2324] Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0)`_
 - `[RFC 7158] The Hyper Text Coffee Pot Control Protocol for Tea Efflux Appliances (HTCPCP-TEA)`_
 - `[RFC 2295] Transparent Content Negotiation in HTTP`_
-- `MDN Web Docs | HTTP repsonse codes`_
+- `MDN Web Docs | HTTP response codes`_
 
 .. _[RFC 2324] Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0): https://tools.ietf.org/html/rfc2324
 .. _[RFC 7158] The Hyper Text Coffee Pot Control Protocol for Tea Efflux Appliances (HTCPCP-TEA): https://tools.ietf.org/html/rfc7168
 .. _[RFC 2295] Transparent Content Negotiation in HTTP: https://tools.ietf.org/html/rfc2295
-.. _MDN Web Docs | HTTP repsonse codes: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+.. _MDN Web Docs | HTTP response codes: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
 Related Work
 ------------
