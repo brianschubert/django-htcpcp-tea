@@ -6,7 +6,7 @@
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django_htcpcp_tea.models import Addition, Pot
+from django_htcpcp_tea.models import Addition, Pot, TeaType
 
 
 class PotTests(TestCase):
@@ -101,6 +101,10 @@ class PotTests(TestCase):
             ],
         )
 
+    def test_pot_str(self):
+        pot = Pot.objects.get(name="A Talented Cow")
+        self.assertEqual(str(pot), '4 - A Talented Cow')
+
 
 class AdditionTests(TestCase):
     fixtures = ['rfc_2324_additions']
@@ -121,3 +125,22 @@ class AdditionTests(TestCase):
             'no option for decaffeinated coffee',
             cm.exception.message,
         )
+
+    def test_addition_can_be_non_decaffeinated(self):
+        try:
+            addition = Addition(name='anything')
+            addition.clean()
+        except:
+            self.fail('Unexpected exception when validating Addition')
+
+    def test_addition_str(self):
+        addition = Addition.objects.get(name='Cream')
+        self.assertEqual(str(addition), 'Milk / Cream')
+
+
+class TeaTypeTests(TestCase):
+    fixtures = ['rfc_7168_teas']
+
+    def test_tea_str(self):
+        tea = TeaType.objects.get(name='Earl Grey')
+        self.assertEqual(str(tea), 'Earl Grey')
