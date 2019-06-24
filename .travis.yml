@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 python:
   - "3.4"
@@ -8,6 +9,12 @@ env:
   - DJANGO_VERSION=2.0
   - DJANGO_VERSION=2.1
   - DJANGO_VERSION=2.2
+matrix:
+  exclude:
+    - python: 3.4
+      env: DJANGO_VERSION=2.1
+    - python: 3.4
+      env: DJANGO_VERSION=2.2
 install:
   - pip3 install django~=$DJANGO_VERSION
   - pip3 install coverage coveralls
