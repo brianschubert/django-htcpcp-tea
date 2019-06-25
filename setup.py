@@ -38,6 +38,11 @@ setup(
     license='MIT',
     author='Brian Schubert',
     url='https://github.com/blueschu/django-htcpcp-tea',
+    project_urls={
+        'Source': 'https://github.com/blueschu/django-htcpcp-tea',
+        'Documentation': 'https://django-htcpcp-tea.readthedocs.io/en/latest/',
+        'Tracker': 'https://github.com/blueschu/django-htcpcp-tea/issues',
+    },
     description="Django app implementing HTCPCP-TEA as defined in RFC 7168.",
     long_description=README,
     long_description_content_type='text/x-rst',
