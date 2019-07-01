@@ -47,6 +47,37 @@ Setting this option to ``True`` *does not* enable HTCPCP GET requests.
 
 .. _RFC 2324 section 3: https://tools.ietf.org/html/rfc2324#section-3
 
+
+HTCPCP_OVERRIDE_SERVER_NAME
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``True``
+
+Whether to override the ``Server`` header field for HTCPCP requests.
+
+When set to ``True``, the Server header will be set to ``'HTCPCP-TEA {SERVER_SOFTWARE}'``, where ``{SERVER_SOFTWARE}`` is the server software string that is added to the environment by a WSGI server, such as the `reference WSGI implementation`_ used by the Django testing server.
+
+When set to a callable, the provided callable will be invoked with the request and response objects received by the middleware. The return value will used as the Server header.
+
+Example:
+
+.. code-block:: python
+
+    def HTCPCP_OVERRIDE_SERVER_NAME(request, response):
+        import sys
+        from platform import python_implementation
+
+        return 'Teapot {}/{}'.format(
+            python_implementation(),
+            sys.version.split()[0],
+        )
+
+When set to a string, the provided string will be formatted with all of the context from ``request.META``.
+
+
+.. _reference WSGI implementation: https://docs.python.org/3.7/library/wsgiref.html#wsgiref.handlers.BaseHandler.server_software
+
+
 HTCPCP_POT_SESSIONS
 ^^^^^^^^^^^^^^^^^^^
 

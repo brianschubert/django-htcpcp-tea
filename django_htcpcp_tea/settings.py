@@ -19,6 +19,8 @@ class _HTCPCPTeaSettings:
 
     GET_ADDITIONS = True
 
+    OVERRIDE_SERVER_NAME = True
+
     POT_SESSIONS = True
 
     STRICT_MIME_TYPE = True

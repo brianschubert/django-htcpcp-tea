@@ -46,6 +46,16 @@ class HTCPCPTeaMiddleware:
         except AttributeError:
             pass
 
+        update_server_name = htcpcp_settings.OVERRIDE_SERVER_NAME
+
+        if update_server_name:
+            if update_server_name is True:
+                response['Server'] = 'HTCPCP-TEA ' + request.META['SERVER_SOFTWARE']
+            elif callable(update_server_name):
+                response['Server'] = update_server_name(request, response)
+            else:
+                response['Server'] = update_server_name.format(**request.META)
+
         return response
 
     def build_alternates(self, response):
