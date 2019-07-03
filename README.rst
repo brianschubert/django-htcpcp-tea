@@ -45,6 +45,7 @@ Notable features:
 - Customizable coffee and teapots
 - Support for BREW and WHEN HTTP methods
 - HTCPCP response codes (e.g. 418 I'm a teapot)
+- Customizable forbidden addition combinations
 
 Documentation
 -------------
