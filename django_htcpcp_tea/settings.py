@@ -15,6 +15,8 @@ class _HTCPCPTeaSettings:
 
     ALLOW_DEPRECATED_POST = True
 
+    CHECK_FORBIDDEN = True
+
     DISABLE_CSRF = True
 
     GET_ADDITIONS = True

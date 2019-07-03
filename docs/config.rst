@@ -19,6 +19,17 @@ The use of the POST method for HTCPCP requests is officially deprecated in `RFC 
 
 .. _RFC 2324 section 2.1.1: https://tools.ietf.org/html/rfc2324#section-2.1.1
 
+HTCPCP_CHECK_FORBIDDEN
+^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``True``
+
+Whether to check for forbidden addition combinations as defined in `RFC 7168 seciton 2.3.2`_.
+
+When set to ``True``, clients will receive a 403 Forbidden with an explanatory message upon requesting a forbidden addition combination.
+
+.. _RFC 7168 seciton 2.3.2: https://tools.ietf.org/html/rfc7168#section-2.3.2
+
 HTCPCP_DISABLE_CSRF
 ^^^^^^^^^^^^^^^^^^^
 
