@@ -161,3 +161,37 @@ class Addition(models.Model):
     @property
     def is_milk(self):
         return self.type == self.MILK
+
+
+class ForbiddenCombination(models.Model):
+    """
+    A combination of additions that is "contrary to the sensibilities of a
+    consensus of drinkers", either for a specific variety of tea or for all
+    beverages.
+    """
+    tea = models.ForeignKey(
+        TeaType,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        help_text=("The type of tea that this forbidden combination applies to."
+                   " Leave blank to apply to all beverages."),
+    )
+
+    additions = models.ManyToManyField(Addition)
+
+    reason = models.CharField(max_length=180)
+
+    def __str__(self):
+        return '{} / {}'.format(
+            'All' if not self.tea else self.tea.name,
+            ', '.join(a.name for a in self.additions.all())
+        )
+
+    def forbids_additions(self, requested_additions):
+        """
+        Return True if the combination of additions that this
+        ForbiddenCombination prohibits is contained in the specified sequence
+        of additions.
+        """
+        return set(self.additions.all()).issubset(requested_additions)

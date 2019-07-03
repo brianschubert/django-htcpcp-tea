@@ -10,9 +10,11 @@ from functools import wraps
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
-from .models import Pot, Addition
+from .models import Addition, Pot
 from .settings import htcpcp_settings
-from .utils import build_alternates, resolve_requested_additions
+from .utils import (
+    build_alternates, find_forbidden_combinations, resolve_requested_additions
+)
 
 
 def require_htcpcp(func):
@@ -61,6 +63,13 @@ def brew_pot(request, pot_designator=None, tea_type=None):
             # Note that this will result in an additional query.
             context = {'supported_additions': pot.supported_additions.all()}
             return render(request, 'django_htcpcp_tea/406.html', context, status=406)
+
+        if htcpcp_settings.CHECK_FORBIDDEN:
+            forbidden = find_forbidden_combinations(additions, tea_type)
+
+            if forbidden:
+                context = {'matched_combinations': forbidden}
+                return render(request, "django_htcpcp_tea/403.html", context, status=403)
 
         if htcpcp_settings.POT_SESSIONS:
             response = _finalize_beverage_with_session(request, pot, beverage_name, additions)

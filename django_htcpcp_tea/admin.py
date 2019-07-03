@@ -8,7 +8,7 @@ from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Count
 
-from .models import Addition, Pot, TeaType
+from .models import Addition, ForbiddenCombination, Pot, TeaType
 
 
 class RelatedItemsExistsListFilter(admin.SimpleListFilter):
@@ -148,3 +148,17 @@ class AdditionAdmin(PotsServingMixin, admin.ModelAdmin):
     list_filter = ('type',)
 
     radio_fields = {'type': admin.HORIZONTAL}
+
+
+@admin.register(ForbiddenCombination)
+class ForbiddenCombinationAdmin(admin.ModelAdmin):
+
+    list_display = ('__str__', 'reason')
+
+    search_fields = ('additions__name', 'tea__name')
+
+    list_filter = (('tea', admin.RelatedOnlyFieldListFilter), ('additions', admin.RelatedOnlyFieldListFilter))
+
+    filter_horizontal = ('additions',)
+
+    save_as = True
