@@ -224,3 +224,7 @@ class ForbiddenCombinationAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.ForeignKey: {'empty_label': '------ All ------'},
     }
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('tea').prefetch_related('additions')
