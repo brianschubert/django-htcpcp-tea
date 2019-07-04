@@ -103,7 +103,10 @@ class PotAdmin(admin.ModelAdmin):
     addition_count_view.short_description = 'supported additions'
 
     def get_queryset(self, request):
-        return super().get_queryset(request).with_tea_count().with_addition_count()
+        queryset = super().get_queryset(request)
+        queryset = queryset.prefetch_related('supported_teas')
+        queryset = queryset.prefetch_related('supported_additions')
+        return queryset.with_tea_count().with_addition_count()
 
 
 class PotsServingMixin:
@@ -178,6 +181,10 @@ class ForbiddenCombinationInline(admin.TabularInline):
 
     classes = ('collapse',)
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('tea').prefetch_related('additions')
+
 
 @admin.register(TeaType)
 class TeaTypeAdmin(PotsServingMixin, HasForbiddenCombinationsMixin, admin.ModelAdmin):
@@ -224,3 +231,7 @@ class ForbiddenCombinationAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.ForeignKey: {'empty_label': '------ All ------'},
     }
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('tea').prefetch_related('additions')
