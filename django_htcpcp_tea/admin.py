@@ -181,6 +181,10 @@ class ForbiddenCombinationInline(admin.TabularInline):
 
     classes = ('collapse',)
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('tea').prefetch_related('additions')
+
 
 @admin.register(TeaType)
 class TeaTypeAdmin(PotsServingMixin, HasForbiddenCombinationsMixin, admin.ModelAdmin):
