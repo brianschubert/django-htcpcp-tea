@@ -63,9 +63,9 @@ def find_forbidden_combinations(requested_additions, tea_slug=None):
     forbidden = ForbiddenCombination.objects.prefetch_related('additions')
 
     if tea_slug:
-        forbidden.filter(Q(tea__slug=tea_slug) | Q(tea__isnull=True))
+        forbidden = forbidden.filter(Q(tea__slug=tea_slug) | Q(tea__isnull=True))
     else:
-        forbidden.filter(tea__isnull=True)
+        forbidden = forbidden.filter(tea__isnull=True)
 
     # Filter ForbiddenCombinations by what additions they forbid in Python
     # since I could not find a way to accomplish this purely in the database.
