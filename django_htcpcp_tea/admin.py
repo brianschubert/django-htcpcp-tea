@@ -6,7 +6,7 @@
 
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Count
+from django.db import models
 
 from .models import Addition, ForbiddenCombination, Pot, TeaType
 
@@ -56,6 +56,14 @@ class ServedByAPotListFilter(RelatedItemsExistsListFilter):
     related_item_field = 'pot_list'
 
 
+class SomeCombinationsForbiddenListFilter(RelatedItemsExistsListFilter):
+    title = 'has forbidden combinations'
+
+    parameter_name = 'has_restrictions'
+
+    related_item_field = 'forbidden_combinations'
+
+
 @admin.register(Pot)
 class PotAdmin(admin.ModelAdmin):
     search_fields = ('supported_teas__name', 'supported_additions__name')
@@ -99,7 +107,10 @@ class PotAdmin(admin.ModelAdmin):
 
 
 class PotsServingMixin:
-    """Mixin to add a 'pots serving' item of a model admin's list_display."""
+    """
+    Mixin to add a 'pots serving' item to a model admin's list_display
+    and list_filter
+    """
 
     def get_list_display(self, request):
         fields = super().get_list_display(request)
@@ -119,11 +130,59 @@ class PotsServingMixin:
     pots_serving_count_view.short_description = 'pots serving'
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(pot_count=Count('pot_list'))
+        return super().get_queryset(request).annotate(
+            pot_count=models.Count('pot_list', distinct=True)
+        )
+
+
+class HasForbiddenCombinationsMixin:
+    """
+    Mixin to add a 'forbidden combinations' item to a model admin's
+    list_display and list_filter.
+    """
+
+    def get_list_display(self, request):
+        fields = super().get_list_display(request)
+        forbidden_callable = self.forbidden_combination_count_view.__name__
+        if forbidden_callable not in fields:
+            return fields + (forbidden_callable,)
+        return fields
+
+    def get_list_filter(self, request):
+        return super().get_list_filter(request) + (SomeCombinationsForbiddenListFilter,)
+
+    def forbidden_combination_count_view(self, obj):
+        """
+        Display the number of forbidden combinations that include the
+        given object.
+        """
+        return obj.forbidden_count
+
+    forbidden_combination_count_view.admin_order_field = 'forbidden_count'
+    forbidden_combination_count_view.short_description = 'forbidden combinations'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            forbidden_count=models.Count('forbidden_combinations', distinct=True)
+        )
+
+
+class ForbiddenCombinationInline(admin.TabularInline):
+    model = ForbiddenCombination
+
+    fields = ('reason', 'additions')
+
+    extra = 0
+
+    filter_horizontal = ('additions',)
+
+    classes = ('collapse',)
 
 
 @admin.register(TeaType)
-class TeaTypeAdmin(PotsServingMixin, admin.ModelAdmin):
+class TeaTypeAdmin(PotsServingMixin, HasForbiddenCombinationsMixin, admin.ModelAdmin):
+    inlines = (ForbiddenCombinationInline,)
+
     search_fields = ('name',)
 
     prepopulated_fields = {'slug': ('name',)}
@@ -140,7 +199,7 @@ class TeaTypeAdmin(PotsServingMixin, admin.ModelAdmin):
 
 
 @admin.register(Addition)
-class AdditionAdmin(PotsServingMixin, admin.ModelAdmin):
+class AdditionAdmin(PotsServingMixin, HasForbiddenCombinationsMixin, admin.ModelAdmin):
     search_fields = ('name',)
 
     list_display = ('name', 'type')
@@ -152,7 +211,6 @@ class AdditionAdmin(PotsServingMixin, admin.ModelAdmin):
 
 @admin.register(ForbiddenCombination)
 class ForbiddenCombinationAdmin(admin.ModelAdmin):
-
     list_display = ('__str__', 'reason')
 
     search_fields = ('additions__name', 'tea__name')
@@ -162,3 +220,7 @@ class ForbiddenCombinationAdmin(admin.ModelAdmin):
     filter_horizontal = ('additions',)
 
     save_as = True
+
+    formfield_overrides = {
+        models.ForeignKey: {'empty_label': '------ All ------'},
+    }

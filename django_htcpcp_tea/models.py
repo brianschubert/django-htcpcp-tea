@@ -174,11 +174,15 @@ class ForbiddenCombination(models.Model):
         null=True,
         blank=True,
         on_delete=models.CASCADE,
+        related_name='forbidden_combinations',
         help_text=("The type of tea that this forbidden combination applies to."
                    " Leave blank to apply to all beverages."),
     )
 
-    additions = models.ManyToManyField(Addition)
+    additions = models.ManyToManyField(
+        Addition,
+        related_name='forbidden_combinations'
+    )
 
     reason = models.CharField(max_length=180)
 

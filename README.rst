@@ -44,8 +44,9 @@ Notable features:
 
 - Customizable coffee and teapots
 - Support for BREW and WHEN HTTP methods
+- Interactive brewing sessions
 - HTCPCP response codes (e.g. 418 I'm a teapot)
-- Customizable forbidden addition combinations
+- User-defined forbidden combinations of beverage additions
 
 Documentation
 -------------
