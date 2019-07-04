@@ -103,7 +103,10 @@ class PotAdmin(admin.ModelAdmin):
     addition_count_view.short_description = 'supported additions'
 
     def get_queryset(self, request):
-        return super().get_queryset(request).with_tea_count().with_addition_count()
+        queryset = super().get_queryset(request)
+        queryset = queryset.prefetch_related('supported_teas')
+        queryset = queryset.prefetch_related('supported_additions')
+        return queryset.with_tea_count().with_addition_count()
 
 
 class PotsServingMixin:
