@@ -6,7 +6,7 @@
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django_htcpcp_tea.models import Addition, Pot, TeaType
+from django_htcpcp_tea.models import Addition, ForbiddenCombination, Pot, TeaType
 
 
 class PotTests(TestCase):
@@ -144,3 +144,35 @@ class TeaTypeTests(TestCase):
     def test_tea_str(self):
         tea = TeaType.objects.get(name='Earl Grey')
         self.assertEqual(str(tea), 'Earl Grey')
+
+
+class ForbiddenCombinationTests(TestCase):
+    fixtures = ["demo_forbidden_combinations", "rfc_2324_additions", "rfc_7168_teas"]
+
+    def test_forbids_additions_empty(self):
+        additions = []
+        for comb in ForbiddenCombination.objects.all():
+            self.assertFalse(comb.forbids_additions(additions))
+
+    def test_forbids_additions_matches_forbidden(self):
+        for comb in ForbiddenCombination.objects.all():
+            additions = comb.additions.all()
+            self.assertTrue(comb.forbids_additions(additions))
+
+    def test_forbids_additions_ignores_missing_one(self):
+        for comb in ForbiddenCombination.objects.all():
+            additions = list(comb.additions.all())
+            additions.pop()  # Remove one addition
+            self.assertFalse(comb.forbids_additions(additions))
+
+    def test_forbids_additions_matches_excessive_additions(self):
+        additions = Addition.objects.all()
+        for comb in ForbiddenCombination.objects.all():
+            self.assertTrue(comb.forbids_additions(additions))
+
+    def test_forbidden_combination_str(self):
+        comb = ForbiddenCombination.objects.get(pk=1)
+        self.assertEqual(
+            str(comb),
+            'All / Cream, Skim'
+        )
