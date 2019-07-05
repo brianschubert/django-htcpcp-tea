@@ -69,6 +69,29 @@ class UtilsStatelessTests(unittest.TestCase):
             ['Sugar', 'Half-and-Half', 'Milk']
         )
 
+    def test_render_alternates_header_empty(self):
+        self.assertEqual(
+            utils.render_alternates_header([]),
+            ''
+        )
+
+    def test_render_alternates_header_format(self):
+        alternates = [
+            ('/pot-1/', 'message/coffeepot'),
+            ('/pot-1/earl-grey', 'message/teapot'),
+            ('/pot-1/', 'message/teapot'),
+            ('/pot-2/earl-grey', 'message/teapot'),
+            ('/pot-2/', 'message/teapot'),
+        ]
+        self.assertEqual(
+            utils.render_alternates_header(alternates),
+            '{"/pot-1/" {type message/coffeepot}},'
+            '{"/pot-1/earl-grey" {type message/teapot}},'
+            '{"/pot-1/" {type message/teapot}},'
+            '{"/pot-2/earl-grey" {type message/teapot}},'
+            '{"/pot-2/" {type message/teapot}}'
+        )
+
 
 @override_settings(ROOT_URLCONF=__name__)
 class UtilsTests(TestCase):

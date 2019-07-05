@@ -7,7 +7,7 @@
 from django.db.models import Q
 from django.urls import reverse
 
-from .models import Pot, ForbiddenCombination
+from .models import ForbiddenCombination, Pot
 from .settings import htcpcp_settings
 
 
@@ -25,6 +25,16 @@ def build_alternates(index_pot=None):
             yield (reverse('pot-detail', args=[pot.id]), 'message/coffeepot')
         for tea in pot.supported_teas.all():
             yield (reverse('pot-detail-tea', args=[pot.id, tea.slug]), 'message/teapot')
+
+
+def render_alternates_header(alternates_pairs):
+    """
+    Render (uri, content-type) pairs into an RFC 2295 Alternates header value.
+    """
+    fmt = '{{"{}" {{type {}}}}}'
+    return ','.join(
+        fmt.format(*pair) for pair in alternates_pairs
+    )
 
 
 def resolve_requested_additions(request):
@@ -56,7 +66,7 @@ def find_forbidden_combinations(requested_additions, tea_slug=None):
     requested additions.
     """
 
-    request_additions = set(requested_additions)
+    requested_additions = set(requested_additions)
 
     # Calls to ForbiddenCombination.forbids_additions will need the full
     # list of forbidden additions for each retrieved objects.
@@ -69,4 +79,4 @@ def find_forbidden_combinations(requested_additions, tea_slug=None):
 
     # Filter ForbiddenCombinations by what additions they forbid in Python
     # since I could not find a way to accomplish this purely in the database.
-    return [fc for fc in forbidden if fc.forbids_additions(request_additions)]
+    return [fc for fc in forbidden if fc.forbids_additions(requested_additions)]
