@@ -1,0 +1,16 @@
+{% extends "django_htcpcp_tea/base_error.html" %}
+
+{% block error_title %}403 Forbidden{% endblock %}
+
+{% block error_body %}
+    <p>This service deems the combination of additions requested to be
+        contrary to the sensibilities of a consensus of drinkers
+        regarding the beverage in question.</p>
+
+    <h2>Reason{{ matched_combinations|pluralize }}</h2>
+    <ul>
+        {% for combination in matched_combinations %}
+            <li>{{ combination.reason }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

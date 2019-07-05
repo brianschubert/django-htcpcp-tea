@@ -9,8 +9,13 @@ import os
 
 from setuptools import find_packages, setup
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
+BASE_DIR = os.path.dirname(__file__)
+
+with open(os.path.join(BASE_DIR, 'README.rst')) as readme:
     README = readme.read()
+
+with open(os.path.join(BASE_DIR, 'CHANGELOG.rst')) as changes:
+    CHANGES = changes.read()
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
@@ -32,14 +37,19 @@ CLASSIFIERS = [
 
 setup(
     name='django-htcpcp-tea',
-    version='0.3.1',
+    version='0.4.0',
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     license='MIT',
     author='Brian Schubert',
     url='https://github.com/blueschu/django-htcpcp-tea',
+    project_urls={
+        'Source': 'https://github.com/blueschu/django-htcpcp-tea',
+        'Documentation': 'https://django-htcpcp-tea.readthedocs.io/en/latest/',
+        'Tracker': 'https://github.com/blueschu/django-htcpcp-tea/issues',
+    },
     description="Django app implementing HTCPCP-TEA as defined in RFC 7168.",
-    long_description=README,
+    long_description=''.join((README, '\n\n', CHANGES)),
     long_description_content_type='text/x-rst',
     keywords="htcpcp django rfc-2324 rfc-7168 coffee tea",
     classifiers=CLASSIFIERS,

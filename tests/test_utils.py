@@ -8,7 +8,7 @@ import unittest
 
 from django.test import RequestFactory, TestCase, override_settings
 from django_htcpcp_tea import urls, utils
-from django_htcpcp_tea.models import Pot
+from django_htcpcp_tea.models import Addition, Pot
 
 # URL patterns for UtilsTests
 urlpatterns = urls.urlpatterns
@@ -72,7 +72,12 @@ class UtilsStatelessTests(unittest.TestCase):
 
 @override_settings(ROOT_URLCONF=__name__)
 class UtilsTests(TestCase):
-    fixtures = ['demo_pots', 'rfc_2324_additions', 'rfc_7168_teas']
+    fixtures = [
+        'demo_pots',
+        'rfc_2324_additions',
+        'rfc_7168_teas',
+        'demo_forbidden_combinations'
+    ]
 
     def test_build_alternates_no_pot(self):
         alternates = list(utils.build_alternates())
@@ -114,4 +119,53 @@ class UtilsTests(TestCase):
                 ('/pot-3/earl-grey/', 'message/teapot'),
                 ('/pot-3/peppermint/', 'message/teapot'),
             ]
+        )
+
+    def test_find_forbidden_combinations_empty(self):
+        self.assertEqual(utils.find_forbidden_combinations([]), [])
+
+    def test_find_forbidden_combinations_matches_forbidden(self):
+        additions = Addition.objects.filter(name__in=['Cream', 'Skim'])
+        self.assertEqual(
+            len(utils.find_forbidden_combinations(additions)),
+            1,
+        )
+
+    def test_find_forbidden_combinations_matches_forbidden_with_tea(self):
+        additions = Addition.objects.filter(name__in=['Rum', 'Whisky'])
+        tea_slug = 'earl-grey'
+
+        forbidden = utils.find_forbidden_combinations(additions, tea_slug)
+
+        self.assertEqual(
+            [str(comb) for comb in forbidden],
+            [
+                'Earl Grey / Rum',
+                'Earl Grey / Whisky'
+            ]
+        )
+
+    def test_find_forbidden_combinations_matches_excessive_additions(self):
+        additions = Addition.objects.all()
+        self.assertEqual(
+            [str(comb) for comb in utils.find_forbidden_combinations(additions)],
+            ['All / Cream, Skim', 'All / Whisky, Rum, Kahlua, Aquavit'],
+        )
+
+    def test_find_forbidden_combinations_matches_excessive_additions_with_tea(self):
+        additions = Addition.objects.all()
+        tea_slug = 'earl-grey'
+
+        forbidden = utils.find_forbidden_combinations(additions, tea_slug)
+
+        self.assertEqual(
+            [str(comb) for comb in forbidden],
+            [
+                'All / Cream, Skim',
+                'Earl Grey / Aquavit',
+                'Earl Grey / Rum',
+                'Earl Grey / Whisky',
+                'Earl Grey / Kahlua',
+                'All / Whisky, Rum, Kahlua, Aquavit',
+            ],
         )

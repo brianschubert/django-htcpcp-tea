@@ -2,7 +2,7 @@
 .. MIT License was not distributed with this file, you can obtain one
 .. at https://opensource.org/licenses/MIT.
 
-Welcome to django-htcpcp-tea's documentation!
+Welcome to Django HTCPCP-TEA's documentation!
 =============================================
 
 A Django app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
