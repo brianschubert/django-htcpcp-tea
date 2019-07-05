@@ -8,7 +8,7 @@ For complete record of changes, see the commit log of the `public git repository
 v0.4.0
 ------
 
-Released ???
+Released 2019-07-05
 
 - Add setting to override the ``Server`` header for HTCPCP responses
 - Add support for user-defined forbidden combinations of additions
