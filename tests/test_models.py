@@ -84,7 +84,7 @@ class PotTests(TestCase):
                 ('French Press', 0),
                 ("Joe's Joe Jar", 0),
                 ('Breville (R) BTM800XL', 3),
-                ('A Talented Cow', 3),
+                ('A Talented Cow', 2),
             ],
         )
 
