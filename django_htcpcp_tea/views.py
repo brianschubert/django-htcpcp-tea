@@ -32,7 +32,7 @@ def require_htcpcp(func):
 @require_htcpcp
 def brew_pot(request, pot_designator=None, tea_type=None):
     if not pot_designator:
-        alternates = build_alternates()
+        alternates = list(build_alternates())
         context = {'alternatives': alternates}
         response = render(request, 'django_htcpcp_tea/options.html', context, status=300)
         response.htcpcp_alternates = alternates
