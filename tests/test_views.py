@@ -34,6 +34,25 @@ class ViewTests(TestCase):
             pk__in=self.pot.supported_teas.all()
         )[:1].get()
 
+    def test_invalid_htcpcp_request(self):
+        bad_requests = [
+            # GET, PUT, HEAD, DELETE, OPTIONS, PATCH, and TRACE
+            # methods are not acceptable HTCPCP verbs
+            self.client.get('/'),
+            self.client.put('/'),
+            self.client.head('/'),
+            self.client.delete('/'),
+            self.client.options('/'),
+            self.client.patch('/'),
+            self.client.trace('/'),
+            # Missing body
+            self.client.post('/'),
+            self.client.brew('/'),
+            self.client.when('/'),
+        ]
+        for request in bad_requests:
+            self.assertEqual(request.status_code, 404)
+
     def test_brew_no_pot(self):
         response = self.client.brew('/', data='start')
         self.assertEqual(response.status_code, 300)
@@ -49,6 +68,13 @@ class ViewTests(TestCase):
         response = self.client.brew(
             make_tea_url(self.pot, self.supported_tea),
             content_type=HTCPCP_TEA_CONTENT,
+            data='start'
+        )
+        self.assertContains(response, b'Brewing', status_code=202)
+
+    def test_brew_tea_start_tea_infer_content_type(self):
+        response = self.client.brew(
+            make_tea_url(self.pot, self.supported_tea),
             data='start'
         )
         self.assertContains(response, b'Brewing', status_code=202)
@@ -110,3 +136,12 @@ class ViewTests(TestCase):
             b'Cannot start a beverage with a WHEN request.',
             status_code=400,
         )
+
+    def test_brew_coffee_is_teapot(self):
+        teapot = Pot.objects.get(pk=3)
+        response = self.client.brew(
+            teapot.get_absolute_url(),
+            content_type=HTCPCP_COFFEE_CONTENT,
+            data='start',
+        )
+        self.assertEqual(response.status_code, 418)
