@@ -8,6 +8,8 @@ from django.test import Client
 
 HTCPCP_COFFEE_CONTENT = 'message/coffeepot'
 
+HTCPCP_TEA_CONTENT = 'message/teapot'
+
 
 class HTCPCPClient(Client):
 
@@ -42,3 +44,7 @@ class HTCPCPClient(Client):
 
     def when(self, *args, **kwargs):
         return self._htcpcp_post('WHEN', *args, **kwargs)
+
+
+def make_tea_url(pot, tea):
+    return ''.join((pot.get_absolute_url(), tea.slug, '/'))

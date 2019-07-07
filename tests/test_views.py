@@ -6,8 +6,11 @@
 
 from django.test import TestCase, override_settings
 from django_htcpcp_tea import urls, utils
+from django_htcpcp_tea.models import Pot, TeaType
 
-from .utils import HTCPCPClient
+from .utils import (
+    HTCPCPClient, HTCPCP_COFFEE_CONTENT, HTCPCP_TEA_CONTENT, make_tea_url
+)
 
 # URL patterns for ViewTests
 urlpatterns = urls.urlpatterns
@@ -22,6 +25,15 @@ class ViewTests(TestCase):
 
     client_class = HTCPCPClient
 
+    def setUp(self) -> None:
+        self.pot = Pot.objects.get(pk=4)
+        # Select any tea supported by the pot
+        self.supported_tea = self.pot.supported_teas.all()[:1].get()
+        # Select any tea not supported by the pot
+        self.unsupported_tea = TeaType.objects.exclude(
+            pk__in=self.pot.supported_teas.all()
+        )[:1].get()
+
     def test_brew_no_pot(self):
         response = self.client.brew('/', data='start')
         self.assertEqual(response.status_code, 300)
@@ -33,8 +45,71 @@ class ViewTests(TestCase):
             )
         )
 
-    def test_when_with_start_body(self):
-        response = self.client.when('/pot-1/', data='start')
+    def test_brew_coffee_start(self):
+        response = self.client.brew(
+            self.pot.get_absolute_url(),
+            content_type=HTCPCP_COFFEE_CONTENT,
+            data='start'
+        )
+        self.assertContains(response, b'Brewing', status_code=202)
+        self.assertEqual(
+            response['Alternates'],
+            utils.render_alternates_header(utils.build_alternates())
+        )
+
+    def test_brew_coffee_stop(self):
+        response = self.client.brew(
+            self.pot.get_absolute_url(),
+            content_type=HTCPCP_COFFEE_CONTENT,
+            data='stop'
+        )
+        self.assertContains(response, b'Finished', status_code=201)
+
+    def test_brew_coffee_stop_required_milk(self):
+        response = self.client.brew(
+            self.pot.get_absolute_url(),
+            content_type=HTCPCP_COFFEE_CONTENT,
+            data='stop',
+            HTTP_ACCEPT_ADDITIONS='Cream',
+        )
+        self.assertContains(response, b'Pouring', status_code=200)
+
+    def test_brew_tea_index(self):
+        response = self.client.brew(
+            self.pot.get_absolute_url(),
+            content_type=HTCPCP_TEA_CONTENT,
+            data='start'
+        )
+        self.assertContains(response, b'Options', status_code=300)
+        self.assertEqual(
+            response['Alternates'],
+            utils.render_alternates_header(
+                utils.build_alternates(index_pot=self.pot)
+            )
+        )
+
+    def test_brew_tea_start_tea(self):
+        response = self.client.brew(
+            make_tea_url(self.pot, self.supported_tea),
+            content_type=HTCPCP_TEA_CONTENT,
+            data='start'
+        )
+        self.assertContains(response, b'Brewing', status_code=202)
+
+    def test_brew_tea_start_unsupported_tea(self):
+        response = self.client.brew(
+            make_tea_url(self.pot, self.unsupported_tea),
+            content_type=HTCPCP_TEA_CONTENT,
+            data='start'
+        )
+        self.assertContains(response, b'not available for this pot', status_code=503)
+
+    def test_when_stop(self):
+        response = self.client.brew(self.pot.get_absolute_url(), data='stop')
+        self.assertContains(response, b'Finished', status_code=201)
+
+    def test_when_start(self):
+        response = self.client.when(self.pot.get_absolute_url(), data='start')
         self.assertContains(
             response,
             b'Cannot start a beverage with a WHEN request.',
