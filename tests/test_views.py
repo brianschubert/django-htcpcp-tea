@@ -9,7 +9,7 @@ from django_htcpcp_tea import urls, utils
 from django_htcpcp_tea.models import Pot, TeaType
 
 from .utils import (
-    HTCPCPClient, HTCPCP_COFFEE_CONTENT, HTCPCP_TEA_CONTENT, make_tea_url
+    HTCPCPClient, HTCPCP_COFFEE_CONTENT, HTCPCP_TEA_CONTENT, make_tea_url,
 )
 
 # URL patterns for ViewTests
@@ -45,6 +45,22 @@ class ViewTests(TestCase):
             )
         )
 
+    def test_brew_tea_start_tea(self):
+        response = self.client.brew(
+            make_tea_url(self.pot, self.supported_tea),
+            content_type=HTCPCP_TEA_CONTENT,
+            data='start'
+        )
+        self.assertContains(response, b'Brewing', status_code=202)
+
+    def test_brew_tea_start_unsupported_tea(self):
+        response = self.client.brew(
+            make_tea_url(self.pot, self.unsupported_tea),
+            content_type=HTCPCP_TEA_CONTENT,
+            data='start'
+        )
+        self.assertContains(response, b'not available for this pot', status_code=503)
+
     def test_brew_coffee_start(self):
         response = self.client.brew(
             self.pot.get_absolute_url(),
@@ -57,18 +73,13 @@ class ViewTests(TestCase):
             utils.render_alternates_header(utils.build_alternates())
         )
 
-    def test_brew_coffee_stop(self):
-        response = self.client.brew(
-            self.pot.get_absolute_url(),
-            content_type=HTCPCP_COFFEE_CONTENT,
-            data='stop'
-        )
+    def test_brew_beverage_stop(self):
+        response = self.client.brew(self.pot.get_absolute_url(), data='stop')
         self.assertContains(response, b'Finished', status_code=201)
 
-    def test_brew_coffee_stop_required_milk(self):
+    def test_brew_beverage_stop_required_milk(self):
         response = self.client.brew(
             self.pot.get_absolute_url(),
-            content_type=HTCPCP_COFFEE_CONTENT,
             data='stop',
             HTTP_ACCEPT_ADDITIONS='Cream',
         )
@@ -87,22 +98,6 @@ class ViewTests(TestCase):
                 utils.build_alternates(index_pot=self.pot)
             )
         )
-
-    def test_brew_tea_start_tea(self):
-        response = self.client.brew(
-            make_tea_url(self.pot, self.supported_tea),
-            content_type=HTCPCP_TEA_CONTENT,
-            data='start'
-        )
-        self.assertContains(response, b'Brewing', status_code=202)
-
-    def test_brew_tea_start_unsupported_tea(self):
-        response = self.client.brew(
-            make_tea_url(self.pot, self.unsupported_tea),
-            content_type=HTCPCP_TEA_CONTENT,
-            data='start'
-        )
-        self.assertContains(response, b'not available for this pot', status_code=503)
 
     def test_when_stop(self):
         response = self.client.brew(self.pot.get_absolute_url(), data='stop')
