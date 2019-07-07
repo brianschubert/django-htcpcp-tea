@@ -131,7 +131,7 @@ def _precheck_teapot(request, pot, tea):
             response = render(request, 'django_htcpcp_tea/options.html', context, status=300)
             response.htcpcp_alternates = alternatives
             return response
-        elif tea not in pot.supported_teas.values_list('name'):
+        elif tea not in pot.supported_teas.values_list('slug', flat=True):
             return render(
                 request,
                 'django_htcpcp_tea/503.html',
