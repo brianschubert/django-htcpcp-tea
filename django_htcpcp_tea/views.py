@@ -155,8 +155,12 @@ def _finalize_beverage(request, pot, beverage_name, additions):
     if request.htcpcp_message_type == 'start':
         if beverage_name == 'coffee':
             # Display alternatives when brewing coffee per RFC 7168 section 2.1.1
-            context['alternatives'] = build_alternates(index_pot=pot)
-        response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
+            alternates = list(build_alternates())
+            context['alternatives'] = alternates
+            response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
+            response.htcpcp_alternates = alternates
+        else:
+            response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
     else:  # request.htcpcp_message_type == 'stop':
         if any(addition.is_milk for addition in additions):
             response = render(request, 'django_htcpcp_tea/pouring.html', context, status=200)  # Ok
