@@ -66,7 +66,7 @@ Default: ``True``
 
 Whether to override the ``Server`` header field for HTCPCP requests.
 
-When set to ``True``, the Server header will be set to ``'HTCPCP-TEA {SERVER_SOFTWARE}'``, where ``{SERVER_SOFTWARE}`` is the server software string that is added to the environment by a WSGI server, such as the `reference WSGI implementation`_ used by the Django testing server.
+When set to ``True``, the Server header will be set to ``'HTCPCP-TEA {SERVER_SOFTWARE}'``, where ``{SERVER_SOFTWARE}`` is the server software string that is added to the environment by a WSGI server, such as the `reference WSGI implementation`_ used by the Django testing server. If the environment providess no ``{SERVER_SOFTWARE}``, then the string ``Python`` will be used.
 
 When set to a callable, the provided callable will be invoked with the request and response objects received by the middleware. The return value will used as the Server header.
 

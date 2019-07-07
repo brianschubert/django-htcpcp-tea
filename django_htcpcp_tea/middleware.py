@@ -51,7 +51,8 @@ class HTCPCPTeaMiddleware:
 
         if update_server_name:
             if update_server_name is True:
-                response['Server'] = 'HTCPCP-TEA ' + request.META['SERVER_SOFTWARE']
+                server = request.META.get('SERVER_SOFTWARE')
+                response['Server'] = 'HTCPCP-TEA ' + (server if server else 'Python')
             elif callable(update_server_name):
                 response['Server'] = update_server_name(request, response)
             else:
