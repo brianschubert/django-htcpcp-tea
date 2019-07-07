@@ -7,6 +7,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Count
+from django.urls import reverse
 from django.utils.functional import cached_property
 
 
@@ -54,6 +55,9 @@ class Pot(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.id, self.name)
+
+    def get_absolute_url(self):
+        return reverse('pot-detail', args=(self.pk,))
 
     @cached_property
     def tea_capable(self):
