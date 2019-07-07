@@ -10,6 +10,10 @@ INSTALLED_APPS = [
     "django_htcpcp_tea",
 ]
 
+MIDDLEWARE = [
+    'django_htcpcp_tea.middleware.HTCPCPTeaMiddleware',
+]
+
 # Use in-memory SQLite database for tests
 DATABASES = {
     'default': {
@@ -17,3 +21,10 @@ DATABASES = {
         'NAME': ':memory:',
     }
 }
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+    },
+]
