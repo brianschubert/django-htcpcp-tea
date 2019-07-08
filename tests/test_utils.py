@@ -114,7 +114,6 @@ class UtilsTests(TestCase):
             ('/pot-4/', 'message/coffeepot'),
             ('/pot-4/darjeeling/', 'message/teapot'),
             ('/pot-4/earl-grey/', 'message/teapot'),
-            ('/pot-4/peppermint/', 'message/teapot')
         ]
 
         self.assertEqual(
