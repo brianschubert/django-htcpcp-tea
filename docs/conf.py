@@ -22,7 +22,7 @@ copyright = '2019, Brian Schubert'
 author = 'Brian Schubert'
 
 # The full version, including alpha/beta/rc tags
-release = '0.3.1'
+release = '0.5.0'
 
 
 # -- General configuration ---------------------------------------------------
