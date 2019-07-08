@@ -5,6 +5,20 @@ For complete record of changes, see the commit log of the `public git repository
 
 .. _public git repository: https://github.com/blueschu/django-htcpcp-tea
 
+v0.5.0
+------
+
+Released 2019-07-08
+
+- Add unit tests for the ``views`` module
+- Add formal support for Python 3.7
+- Expand ``utils`` unit tests
+- Fix missing ``Alternates`` header due to generator exhaustion
+- Fix ``Server`` header override when the WSGI implementation does not populate the ``SERVER_SOFTWARE`` variable
+- Fix detection of supported teas in the request URI
+- Refactor handling of ``Alternates`` header generation
+- Refactor the pots data fixture to include a pot that supports a proper subset of available teas
+
 v0.4.0
 ------
 
