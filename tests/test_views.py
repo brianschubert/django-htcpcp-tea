@@ -16,12 +16,14 @@ from .utils import (
 urlpatterns = urls.urlpatterns
 
 
-@override_settings(
-    HTCPCP_POT_SESSIONS=False,
-    ROOT_URLCONF=__name__,
-)
-class ViewTests(TestCase):
-    fixtures = ['demo_pots', 'rfc_2324_additions', 'rfc_7168_teas', ]
+@override_settings(ROOT_URLCONF=__name__)
+class BaseViewTests(TestCase):
+    fixtures = [
+        'demo_pots',
+        'rfc_2324_additions',
+        'rfc_7168_teas',
+        'demo_forbidden_combinations'
+    ]
 
     client_class = HTCPCPClient
 
@@ -33,6 +35,10 @@ class ViewTests(TestCase):
         self.unsupported_tea = TeaType.objects.exclude(
             pk__in=self.pot.supported_teas.all()
         )[:1].get()
+
+
+@override_settings(HTCPCP_POT_SESSIONS=False)
+class ViewTests(BaseViewTests):
 
     def test_invalid_htcpcp_request(self):
         bad_requests = [
