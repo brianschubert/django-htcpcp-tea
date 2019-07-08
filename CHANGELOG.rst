@@ -5,6 +5,14 @@ For complete record of changes, see the commit log of the `public git repository
 
 .. _public git repository: https://github.com/blueschu/django-htcpcp-tea
 
+
+v0.5.1
+------
+
+Released 2019-07-08
+
+- Fix attribute error when running tests with Django 2.0 / Python 3.4
+
 v0.5.0
 ------
 

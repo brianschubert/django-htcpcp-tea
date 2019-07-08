@@ -4,6 +4,7 @@
 #  MIT License was not distributed with this file, you can obtain one
 #  at https://opensource.org/licenses/MIT.
 
+import django
 from django.test import Client
 
 HTCPCP_COFFEE_CONTENT = 'message/coffeepot'
@@ -27,7 +28,11 @@ class HTCPCPClient(Client):
         Mimic the functionality of Client.post, but allow for the customization
         of the HTTP verb associated with a post-like request.
         """
-        data = self._encode_json({} if data is None else data, content_type)
+        if django.VERSION < (2, 1):
+            # self._encode_json only exists in Django>=2.1a1
+            data = {} if data is None else data
+        else:
+            data = self._encode_json({} if data is None else data, content_type)
         post_data = self._encode_data(data, content_type)
 
         response = self.generic(method, path, post_data, content_type, secure=secure, **extra)
