@@ -38,7 +38,7 @@ CLASSIFIERS = [
 
 setup(
     name='django-htcpcp-tea',
-    version='0.3.1',
+    version='0.5.1',
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     license='MIT',
