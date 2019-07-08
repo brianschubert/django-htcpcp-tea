@@ -7,7 +7,13 @@
 SECRET_KEY = 'supr-s3krit-kee'
 
 INSTALLED_APPS = [
+    'django.contrib.sessions',
     "django_htcpcp_tea",
+]
+
+MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_htcpcp_tea.middleware.HTCPCPTeaMiddleware',
 ]
 
 # Use in-memory SQLite database for tests
@@ -17,3 +23,10 @@ DATABASES = {
         'NAME': ':memory:',
     }
 }
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+    },
+]

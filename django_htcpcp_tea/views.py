@@ -32,8 +32,10 @@ def require_htcpcp(func):
 @require_htcpcp
 def brew_pot(request, pot_designator=None, tea_type=None):
     if not pot_designator:
-        response = render(request, 'django_htcpcp_tea/options.html', status=300)
-        response.htcpcp_alternates = build_alternates()
+        alternates = list(build_alternates())
+        context = {'alternatives': alternates}
+        response = render(request, 'django_htcpcp_tea/options.html', context, status=300)
+        response.htcpcp_alternates = alternates
         return response
 
     if request.method == 'WHEN' and request.htcpcp_message_type == 'start':
@@ -124,12 +126,12 @@ def _precheck_teapot(request, pot, tea):
     """
     if request.htcpcp_message_type == 'start':
         if not tea:  # Require tea type only when starting a new beverage
-            alternatives = build_alternates(index_pot=pot)
+            alternatives = list(build_alternates(index_pot=pot))
             context = {'alternatives': alternatives}
             response = render(request, 'django_htcpcp_tea/options.html', context, status=300)
             response.htcpcp_alternates = alternatives
             return response
-        elif tea not in pot.supported_teas.values_list('name'):
+        elif tea not in pot.supported_teas.values_list('slug', flat=True):
             return render(
                 request,
                 'django_htcpcp_tea/503.html',
@@ -153,8 +155,12 @@ def _finalize_beverage(request, pot, beverage_name, additions):
     if request.htcpcp_message_type == 'start':
         if beverage_name == 'coffee':
             # Display alternatives when brewing coffee per RFC 7168 section 2.1.1
-            context['alternatives'] = build_alternates(index_pot=pot)
-        response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
+            alternates = list(build_alternates())
+            context['alternatives'] = alternates
+            response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
+            response.htcpcp_alternates = alternates
+        else:
+            response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
     else:  # request.htcpcp_message_type == 'stop':
         if any(addition.is_milk for addition in additions):
             response = render(request, 'django_htcpcp_tea/pouring.html', context, status=200)  # Ok

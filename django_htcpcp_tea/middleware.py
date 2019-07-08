@@ -5,10 +5,10 @@
 #  at https://opensource.org/licenses/MIT.
 
 from .settings import htcpcp_settings
+from .utils import render_alternates_header
 
 
 class HTCPCPTeaMiddleware:
-
     HTCPCP_MESSAGE_KEYWORDS = (b'start', b'stop')
 
     def __init__(self, get_response):
@@ -42,7 +42,8 @@ class HTCPCPTeaMiddleware:
         response = self.get_response(request)
 
         try:
-            response['Alternates'] = self.build_alternates(response)
+            alternates_pairs = response.htcpcp_alternates
+            response['Alternates'] = render_alternates_header(alternates_pairs)
         except AttributeError:
             pass
 
@@ -50,16 +51,11 @@ class HTCPCPTeaMiddleware:
 
         if update_server_name:
             if update_server_name is True:
-                response['Server'] = 'HTCPCP-TEA ' + request.META['SERVER_SOFTWARE']
+                server = request.META.get('SERVER_SOFTWARE')
+                response['Server'] = 'HTCPCP-TEA ' + (server if server else 'Python')
             elif callable(update_server_name):
                 response['Server'] = update_server_name(request, response)
             else:
                 response['Server'] = update_server_name.format(**request.META)
 
         return response
-
-    def build_alternates(self, response):
-        fmt = '{{"{}" {{type {}}}}}'
-        return ','.join(
-            fmt.format(*pair) for pair in response.htcpcp_alternates
-        )

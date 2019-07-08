@@ -31,13 +31,14 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 setup(
     name='django-htcpcp-tea',
-    version='0.4.0',
+    version='0.5.0',
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     license='MIT',
