@@ -11,6 +11,8 @@ from .utils import render_alternates_header
 class HTCPCPTeaMiddleware:
     HTCPCP_MESSAGE_KEYWORDS = (b'start', b'stop')
 
+    HTCPCP_MIME_TYPES = ('message/teapot', 'message/coffeepot')
+
     def __init__(self, get_response):
         self.get_response = get_response
         self.valid_methods = ('BREW', 'WHEN')
@@ -36,6 +38,10 @@ class HTCPCPTeaMiddleware:
                     break  # Trigger else branch if no keyword is found
             else:
                 htcpcp_valid = False
+
+        if (htcpcp_settings.STRICT_MIME_TYPE and
+            request.content_type not in self.HTCPCP_MIME_TYPES):
+            htcpcp_valid = False
 
         request.htcpcp_valid = htcpcp_valid
 
