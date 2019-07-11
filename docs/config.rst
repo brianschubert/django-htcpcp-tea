@@ -59,6 +59,20 @@ Setting this option to ``True`` *does not* enable HTCPCP GET requests.
 .. _RFC 2324 section 3: https://tools.ietf.org/html/rfc2324#section-3
 
 
+HTCPCP_OVERRIDE_ROOT_URI
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``False``
+
+Whether to override the the root URI (``/``) for HTCPCP requests.
+
+This option is included to allow for the creation of highly compliant HTCPCP services. Setting this option to ``True`` will allow your webapp to serve a proper Alternates header and page when an HTCPCP request is directed to the root URI (see `RFC 7168 section 2.1.1`_). This is equivalent to requesting the ``''`` URI specified in this app's URL patterns.
+
+Since overriding the root page of a webapp can be a surprising behavior, enabling ``HTCPCP_OVERRIDE_ROOR_URI`` requires opting-in to stricter HTCPCP validation checks to make sure clients _really_ want a root request to be treated as an HTCPCP request. Namely, the ``HTCPCP_STRICT_MINE_TYPES`` setting MUST also be enabled in order for this setting to have an effect.
+
+.. _RFC 7168 section 2.1.1: https://tools.ietf.org/html/rfc7168#section-2.1.1
+
+
 HTCPCP_OVERRIDE_SERVER_NAME
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
