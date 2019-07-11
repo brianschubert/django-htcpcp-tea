@@ -120,6 +120,15 @@ class MiddlewareTests(unittest.TestCase):
                 'Normal Server Name',
             )
 
+    def test_strict_mine_types(self):
+        for condition in (True, False):
+            with override_settings(HTCPCP_STRICT_MIME_TYPE=condition):
+                checker = self._make_assert_htcpcp_valid(is_valid=not condition)
+                # Check if request with non-HTCPCP MIME type valid when
+                # STRICT_MINE_TYPE is disabled, but valid when it is enabled.
+                request = self.rf.post('/', content_type='message/other', data='start')
+                HTCPCPTeaMiddleware(get_response=checker)(request)
+
     def _make_assert_htcpcp_valid(self, is_valid=True):
         def _assert_htcpcp_valid(request):
             self.assertEqual(request.htcpcp_valid, is_valid)
