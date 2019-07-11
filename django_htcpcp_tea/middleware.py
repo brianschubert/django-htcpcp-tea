@@ -47,7 +47,7 @@ class HTCPCPTeaMiddleware:
         request.htcpcp_valid = htcpcp_valid
 
         if (htcpcp_valid and request.path == '/' and
-                htcpcp_settings.OVERRIDE_ROOT and htcpcp_settings.STRICT_MIME_TYPE):
+                htcpcp_settings.OVERRIDE_ROOT_URI and htcpcp_settings.STRICT_MIME_TYPE):
             response = brew_pot(request)
         else:
             response = self.get_response(request)

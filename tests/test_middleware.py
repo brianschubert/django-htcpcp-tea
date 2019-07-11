@@ -144,12 +144,12 @@ class MiddlewareDBTests(TestCase):
 
     @override_settings(HTCPCP_STRICT_MIME_TYPE=True)
     def test_override_root(self):
-        with override_settings(HTCPCP_OVERRIDE_ROOT=True):
+        with override_settings(HTCPCP_OVERRIDE_ROOT_URI=True):
             request = self.rf.post('/', content_type=HTCPCP_COFFEE_CONTENT, data='start')
             response = HTCPCPTeaMiddleware(lambda request: HttpResponse('Ok'))(request)
             self.assertContains(response, 'Options', status_code=300)
 
-        with override_settings(HTCPCP_OVERRIDE_ROOT=False):
+        with override_settings(HTCPCP_OVERRIDE_ROOT_URI=False):
             request = self.rf.post('/', content_type=HTCPCP_COFFEE_CONTENT, data='start')
             response = HTCPCPTeaMiddleware(lambda request: HttpResponse('Ok'))(request)
             self.assertContains(response, 'Ok', status_code=200)
