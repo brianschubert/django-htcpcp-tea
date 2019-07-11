@@ -6,6 +6,7 @@
 
 from .settings import htcpcp_settings
 from .utils import render_alternates_header
+from .views import brew_pot
 
 
 class HTCPCPTeaMiddleware:
@@ -40,12 +41,16 @@ class HTCPCPTeaMiddleware:
                 htcpcp_valid = False
 
         if (htcpcp_settings.STRICT_MIME_TYPE and
-            request.content_type not in self.HTCPCP_MIME_TYPES):
+                request.content_type not in self.HTCPCP_MIME_TYPES):
             htcpcp_valid = False
 
         request.htcpcp_valid = htcpcp_valid
 
-        response = self.get_response(request)
+        if (htcpcp_valid and request.path == '/' and
+                htcpcp_settings.OVERRIDE_ROOT_URI and htcpcp_settings.STRICT_MIME_TYPE):
+            response = brew_pot(request)
+        else:
+            response = self.get_response(request)
 
         try:
             alternates_pairs = response.htcpcp_alternates
