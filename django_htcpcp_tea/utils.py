@@ -39,7 +39,7 @@ def render_alternates_header(alternates_pairs):
 
 def resolve_requested_additions(request):
     """
-    Return to requested additions for the provided request.
+    Return the requested additions for the provided request.
 
     Additions may be requested in the ``Accept-Additions`` header field, or
     (if the ``HTCPCP_GET_ADDITIONS`` settings is enabled) in the query string

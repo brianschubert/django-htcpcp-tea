@@ -10,9 +10,13 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+import django
+sys.path.insert(0, os.path.abspath('..'))
+# Setup django using the tests module's settings
+os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
+django.setup()
 
 
 # -- Project information -----------------------------------------------------
@@ -31,6 +35,7 @@ release = '0.5.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,3 +60,5 @@ html_theme = 'default'
 html_static_path = ['_static']
 
 master_doc = 'index'
+
+add_module_names = False
