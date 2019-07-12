@@ -16,3 +16,4 @@ Django HTCPCP-TEA is a `Django`_ app that implements the TEA extension to HTCPCP
 
    install
    config
+   Changelog <changelog>
