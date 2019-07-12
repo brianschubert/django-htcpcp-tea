@@ -5,9 +5,10 @@
 Welcome to Django HTCPCP-TEA's documentation!
 =============================================
 
-A Django app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
+Django HTCPCP-TEA is a `Django`_ app that implements the TEA extension to HTCPCP as defined in `RFC 7168`_.
 
 .. _RFC 7168: https://tools.ietf.org/html/rfc7168
+.. _Django: https://www.djangoproject.com/
 
 .. toctree::
    :maxdepth: 2
