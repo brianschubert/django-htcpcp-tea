@@ -5,6 +5,8 @@
 Django HTCPCP-TEA API
 =====================
 
+Below is an extremely terse summary of the API exposed by Django HTCPCP-TEA.
+
 Models (``django_htcpcp_tea.models``)
 -------------------------------------
 
