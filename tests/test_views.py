@@ -187,6 +187,15 @@ class ViewTests(BaseViewTests):
         )
         self.assertContains(response, b'Not Acceptable', status_code=406)
 
+    def test_brew_coffee_pot_out_of_service(self):
+        useless_pot = Pot.objects.create(id=100, name='Broken Pot', brew_coffee=False)
+        response = self.client.brew(
+            useless_pot.get_absolute_url(),
+            content_type=HTCPCP_COFFEE_CONTENT,
+            data='start',
+        )
+        self.assertContains(response, b'Pot out of service.', status_code=503)
+
 
 @override_settings(HTCPCP_POT_SESSIONS=True)
 class ViewSessionsTests(BaseViewTests):
