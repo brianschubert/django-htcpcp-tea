@@ -5,28 +5,15 @@
 #  at https://opensource.org/licenses/MIT.
 
 from datetime import datetime
-from functools import wraps
 
-from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
+from .decorators import require_htcpcp
 from .models import Addition, Pot
 from .settings import htcpcp_settings
 from .utils import (
-    build_alternates, find_forbidden_combinations, resolve_requested_additions
+    build_alternates, find_forbidden_combinations, resolve_requested_additions,
 )
-
-
-def require_htcpcp(func):
-    """Decorator to make a view only respond to valid HTCPCP requests."""
-
-    @wraps(func)
-    def _require_htcpcp(request, *args, **kwargs):
-        if not request.htcpcp_valid:
-            raise Http404
-        return func(request, *args, **kwargs)
-
-    return _require_htcpcp
 
 
 @require_htcpcp
