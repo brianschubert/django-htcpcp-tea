@@ -21,6 +21,8 @@ class _HTCPCPTeaSettings:
 
     GET_ADDITIONS = True
 
+    OVERRIDE_ROOT_URI = False
+
     OVERRIDE_SERVER_NAME = True
 
     POT_SESSIONS = True
@@ -28,6 +30,8 @@ class _HTCPCPTeaSettings:
     STRICT_MIME_TYPE = True
 
     STRICT_REQUEST_BODY = False
+
+    USE_SAFE_HEADER_EXT = True
 
     def __init__(self, settings_prefix):
         self.prefix = settings_prefix

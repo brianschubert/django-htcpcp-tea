@@ -6,10 +6,13 @@
 
 from .settings import htcpcp_settings
 from .utils import render_alternates_header
+from .views import brew_pot
 
 
 class HTCPCPTeaMiddleware:
     HTCPCP_MESSAGE_KEYWORDS = (b'start', b'stop')
+
+    HTCPCP_MIME_TYPES = ('message/teapot', 'message/coffeepot')
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -37,9 +40,17 @@ class HTCPCPTeaMiddleware:
             else:
                 htcpcp_valid = False
 
+        if (htcpcp_settings.STRICT_MIME_TYPE and
+                request.content_type not in self.HTCPCP_MIME_TYPES):
+            htcpcp_valid = False
+
         request.htcpcp_valid = htcpcp_valid
 
-        response = self.get_response(request)
+        if (htcpcp_valid and request.path == '/' and
+                htcpcp_settings.OVERRIDE_ROOT_URI and htcpcp_settings.STRICT_MIME_TYPE):
+            response = brew_pot(request)
+        else:
+            response = self.get_response(request)
 
         try:
             alternates_pairs = response.htcpcp_alternates
