@@ -148,7 +148,7 @@ Default: ``True``
 
 Whether to use the extension to the ``Safe`` header field  defined in `RFC 2324 section 2.2.1.1`_.
 
-When set to ``True``, the decorators that this app provide for managing the ``Safe`` header will modify the header's value according to its extended semantics in the HTCPCP standard.
+When set to ``True``, the decorators that this app provides for managing the ``Safe`` header will modify the header's value according to its extended semantics in the HTCPCP standard.
 
 .. _RFC 2324 section 2.2.1.1: https://tools.ietf.org/html/rfc2324#section-2.2.1.1
 
