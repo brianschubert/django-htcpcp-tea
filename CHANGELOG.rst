@@ -5,6 +5,23 @@ For complete record of changes, see the commit log of the `public git repository
 
 .. _public git repository: https://github.com/blueschu/django-htcpcp-tea
 
+v0.6.0
+------
+
+Released 2019-07-14
+
+- Add units tests for ``middleware`` module
+- Add units test for ``admin`` module
+- Add check to strictly enforce HTCPCP MIME types
+- Add setting to override the rot url view for HTCPCP requests
+- Add documentation for overriding HTCPCP templates
+- Add changelog to Sphinx documentation
+- Add API summary to Sphinx documentation
+- Add support for the extension to the ``Safe`` header field from RFC 2324
+- Amend minor typo in ``utils`` module docstrings
+- Expand unit tests for ``views`` module
+- Move ``require_htcpcp`` decorator to the ``decorators`` module
+- Update the package installation instructions
 
 v0.5.1
 ------
