@@ -47,13 +47,13 @@ def safe_condition(token):
     return decorator
 
 
-def safe_require_user_awake():
-    """
-    Decorator for adding an "if-user-awake" safe condition to the Safe header
-    field.
+safe_require_user_awake = safe_condition('user-awake')
+"""
+Decorator for adding an "if-user-awake" safe condition to the Safe header
+field.
 
-     See `RFC 2324 section 2.2.1.1`_ for further details.
+See `RFC 2324 section 2.2.1.1`_ for further details.
 
-    .. _RFC 2324 section 2.2.1.1: https://tools.ietf.org/html/rfc2324#section-2.2.1.1
-    """
-    return safe_condition('user-awake')
+.. _RFC 2324 section 2.2.1.1: https://tools.ietf.org/html/rfc2324#section-2.2.1.1
+"""
+
