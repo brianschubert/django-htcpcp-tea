@@ -140,6 +140,19 @@ When set to ``True``, HTCPCP requests must have a body constistly solely of ``st
 
 By default, this configuration is set to ``False`` since it is understood that some clients may want to include additional content in the request entity, such as "please" and "thank you".
 
+
+HTCPCP_USE_SAFE_HEADER_EXT
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``True``
+
+Whether to use the extension to the ``Safe`` header field  defined in `RFC 2324 section 2.2.1.1`_.
+
+When set to ``True``, the decorators that this app provide for managing the ``Safe`` header will modify the header's value according to its extended semantics in the HTCPCP standard.
+
+.. _RFC 2324 section 2.2.1.1: https://tools.ietf.org/html/rfc2324#section-2.2.1.1
+
+
 Templates
 ---------
 

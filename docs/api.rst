@@ -71,6 +71,12 @@ Views (``django_htcpcp_tea.views``)
     :undoc-members:
 
 
+Decorators (``django_htcpc_tea.decorators``)
+--------------------------------------------
+
+.. automodule:: django_htcpcp_tea.decorators
+    :members:
+
 Settings (``django_htcpcp_tea.settings``)
 -----------------------------------------
 
