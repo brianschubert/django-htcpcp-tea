@@ -31,6 +31,8 @@ class _HTCPCPTeaSettings:
 
     STRICT_REQUEST_BODY = False
 
+    USE_SAFE_HEADER_EXT = True
+
     def __init__(self, settings_prefix):
         self.prefix = settings_prefix
 
