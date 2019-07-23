@@ -36,6 +36,18 @@ When set to ``True``, clients will receive a 403 Forbidden with an explanatory m
 
 .. _RFC 7168 seciton 2.3.2: https://tools.ietf.org/html/rfc7168#section-2.3.2
 
+
+HTCPCP_RESPONSE_CONTENT_TYPE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``None``
+
+The MIMI type to use for HTCPCP responses. Specify this setting if you override this app's templates to return content other than HTML, such as JSON or XML data.
+
+If set to a string, the value will be used as the MIME type for the response body.
+
+If left as ``None``, the content type provided by Django (usually ``text/html``) will be used.
+
 HTCPCP_DISABLE_CSRF
 ^^^^^^^^^^^^^^^^^^^
 

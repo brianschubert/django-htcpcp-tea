@@ -120,6 +120,32 @@ class MiddlewareTests(unittest.TestCase):
                 'Normal Server Name',
             )
 
+    def test_override_content_type(self):
+        def get_response(request):
+            return HttpResponse('Hello', content_type='text/plain')
+
+        middleware = HTCPCPTeaMiddleware(get_response=get_response)
+
+        valid_request = self.rf.post('/', content_type=HTCPCP_COFFEE_CONTENT, data='start')
+        invalid_request = self.rf.get('/')
+
+        with override_settings(HTCPCP_RESPONSE_CONTENT_TYPE=None):
+            for r in (valid_request, invalid_request):
+                self.assertEqual(
+                    middleware(r)['Content-Type'],
+                    'text/plain',
+                )
+
+        with override_settings(HTCPCP_RESPONSE_CONTENT_TYPE='something/special'):
+            self.assertEqual(
+                middleware(valid_request)['Content-Type'],
+                'something/special',
+            )
+            self.assertEqual(
+                middleware(invalid_request)['Content-Type'],
+                'text/plain',
+            )
+
     def test_strict_mine_types(self):
         for condition in (True, False):
             with override_settings(HTCPCP_STRICT_MIME_TYPE=condition):

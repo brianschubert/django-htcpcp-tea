@@ -17,6 +17,8 @@ class _HTCPCPTeaSettings:
 
     CHECK_FORBIDDEN = True
 
+    RESPONSE_CONTENT_TYPE = None
+
     DISABLE_CSRF = True
 
     GET_ADDITIONS = True
