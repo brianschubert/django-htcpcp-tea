@@ -13,13 +13,9 @@ Django HTCPCP-TEA
     :target: https://django-htcpcp-tea.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://img.shields.io/pypi/pyversions/django-htcpcp-tea.svg
+.. image:: https://img.shields.io/pypi/v/django-htcpcp-tea.svg
     :target: https://pypi.org/project/django-htcpcp-tea/
-    :alt: PyPI - Python Version
-
-.. image:: https://img.shields.io/pypi/djversions/django-htcpcp-tea.svg
-    :target: https://pypi.org/project/django-htcpcp-tea/
-    :alt: PyPI - Django Version
+    :alt: PyPI - django-htcpcp-tea
 
 .. image:: https://img.shields.io/github/license/blueschu/django-htcpcp-tea.svg
     :target: ./LICENSE
