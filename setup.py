@@ -18,7 +18,7 @@ with open(os.path.join(BASE_DIR, 'CHANGELOG.rst')) as changes:
     CHANGES = changes.read()
 
 CLASSIFIERS = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Environment :: Web Environment',
     'Framework :: Django',
     'Framework :: Django :: 2.0',
