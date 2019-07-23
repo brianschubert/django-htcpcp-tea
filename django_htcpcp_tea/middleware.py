@@ -59,7 +59,7 @@ class HTCPCPTeaMiddleware:
             pass
 
         update_server_name = htcpcp_settings.OVERRIDE_SERVER_NAME
-        if update_server_name:
+        if htcpcp_valid and update_server_name:
             if update_server_name is True:
                 server = request.META.get('SERVER_SOFTWARE')
                 response['Server'] = 'HTCPCP-TEA ' + (server if server else 'Python')

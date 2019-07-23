@@ -79,6 +79,24 @@ class MiddlewareTests(unittest.TestCase):
             'HTCPCP-TEA Squirrel With a Paintbrush',
         )
 
+    @override_settings(HTCPCP_OVERRIDE_SERVER_NAME=True)
+    def test_override_server_name_ignores_invalid(self):
+        def get_response(request):
+            response = HttpResponse()
+            response['Server'] = 'Normal Server Name'
+            return response
+
+        middleware = HTCPCPTeaMiddleware(get_response=get_response)
+        invalid_request = self.rf.get('/')
+
+        # Ensure server name is not overridden when the request is not a valid
+        # HTCPCP request.
+        self.assertEqual(
+            middleware(invalid_request)['Server'],
+            'Normal Server Name',
+        )
+
+
     def test_override_server_name_callable(self):
         middleware = HTCPCPTeaMiddleware(lambda request: HttpResponse())
         request = self.rf.post('/', content_type=HTCPCP_COFFEE_CONTENT, data='start')
