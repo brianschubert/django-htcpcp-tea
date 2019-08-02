@@ -165,6 +165,8 @@ When set to ``True``, the decorators that this app provides for managing the ``S
 .. _RFC 2324 section 2.2.1.1: https://tools.ietf.org/html/rfc2324#section-2.2.1.1
 
 
+.. _override_templates:
+
 Templates
 ---------
 
