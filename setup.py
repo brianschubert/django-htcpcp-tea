@@ -18,7 +18,7 @@ with open(os.path.join(BASE_DIR, 'CHANGELOG.rst')) as changes:
     CHANGES = changes.read()
 
 CLASSIFIERS = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Environment :: Web Environment',
     'Framework :: Django',
     'Framework :: Django :: 2.0',
@@ -38,7 +38,7 @@ CLASSIFIERS = [
 
 setup(
     name='django-htcpcp-tea',
-    version='0.6.0',
+    version='0.7.0',
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     license='MIT',

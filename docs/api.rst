@@ -7,8 +7,8 @@ Django HTCPCP-TEA API
 
 Below is an extremely terse summary of the API exposed by Django HTCPCP-TEA.
 
-Models (``django_htcpcp_tea.models``)
--------------------------------------
+Models
+------
 
 .. autoclass:: django_htcpcp_tea.models.Pot
     :members: tea_capable, is_teapot, fetch_additions
@@ -63,22 +63,22 @@ Models (``django_htcpcp_tea.models``)
 
        The combination of additions that this forbidden combination forbids.
 
-Views (``django_htcpcp_tea.views``)
------------------------------------
+Views
+-----
 
 .. automodule:: django_htcpcp_tea.views
     :members:
     :undoc-members:
 
 
-Decorators (``django_htcpc_tea.decorators``)
---------------------------------------------
+Decorators
+----------
 
 .. automodule:: django_htcpcp_tea.decorators
     :members:
 
-Settings (``django_htcpcp_tea.settings``)
------------------------------------------
+Settings
+--------
 
 .. automodule:: django_htcpcp_tea.settings
     :members:
@@ -92,8 +92,8 @@ Settings (``django_htcpcp_tea.settings``)
         this instance.
 
 
-Utils (``django_htcpcp_tea.utils``)
------------------------------------
+Utils
+-----
 
 .. automodule:: django_htcpcp_tea.utils
     :members:
