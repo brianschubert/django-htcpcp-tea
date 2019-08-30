@@ -5,15 +5,17 @@
 Examples
 ========
 
-This document highlights the basic usage of Django HTCPCP-TEA by interacting with it over a command line interface. It is worth noting that since Django HTCPCP-TEA simulates an HTTP extension, there a many other ways to use it beyond toying with it over a CLI.
+This document highlights the basic usage of Django HTCPCP-TEA by interacting with it over a command line interface. It is worth noting that since Django HTCPCP-TEA simulates an HTTP extension, there are many other ways to use it beyond a CLI.
 
-In these examples, I will be using the GNU `netcat`_ utility to transmit HTTP requests. Netcat is available for most Unix systems, including MacOS and Linux. Similar utilities are available for Windows systems.
+In these examples, I will be using the GNU `netcat`_ utility to transmit HTTP requests. Netcat is available for most Unix systems, including MacOS and Linux. Similar utilities are also available for Windows systems.
 
 .. _netcat: http://netcat.sourceforge.net/
 
-.. note:: Running a testing server
+For the sake of brevity, this document assumes that you have already installed Django HTCPCP-TEA will the "Schema Compliant" URL configuration (see :ref:`install-schema-compliant`). If you want to follow these examples for with "Standard" installation, add the appropriate prefix to the request line's URI in each HTCPCP request.
 
-    These examples interact with a locally run instance of the testing server that ships with Django. To duplicate this setup, add ``example.localhost`` as a loopback address on your system. On Unix systems, this can be accomplished by adding::
+.. note::
+
+    These examples interact with a locally run instance of the `Django testing server`_ located at ``example.localhost:8080``. To duplicate this setup, add ``example.localhost`` as a loopback address on your system. On Unix systems, this can be accomplished by adding::
 
         127.0.0.1 example.localhost
 
@@ -23,14 +25,14 @@ In these examples, I will be using the GNU `netcat`_ utility to transmit HTTP re
 
         $ ./manage.py runserver example.localhost:8080
 
-For the sake of brevity, this document assumes that you have installed Django HTCPCP-TEA will the "Schema Compliant" url configuration. To adjust these examples for a "Standard" installation, simply add the appropriate prefix to the uri in the request line of each HTCPCP request.
+.. _Django testing server: https://docs.djangoproject.com/en/2.2/ref/django-admin/#runserver
 
 Basic HTCPCP
 ------------
 
 The simplest way to use Django HTCPCP-TEA is with pot sessions disabled. If you have set the ``HTCPCP_POT_SESSION`` setting to ``False``, Django HTCPCP-TEA will not try to keep track of your transaction history with the servers pots, so you do not have to worry about keeping track of a session id.
 
-Begin by creating a file named ``request.http`` with the following contents:
+Let's begin using Django HTCPCP-TEA in this capacity by creating a file named ``request.http`` with the following contents:
 
 .. code-block:: http
 
@@ -45,7 +47,7 @@ Begin by creating a file named ``request.http`` with the following contents:
 
     The HTCPCP request listed above uses the ``BREW`` request method from the HTCPCP standard. If this method is not available to you in your HTTP client, the ``POST`` method can be used in place with no loss of functionality.
 
-This is a simple HTCPCP request that will prompt the server to return a list of available beverages. To the untrained eye, this file looks like an ordinary HTTP request: it has a well-formed request line, Host header, and some entity body. A closer look, however, makes it clear that this request makes us of some unconventional HTTP. Most notably, the request method, found at the beginning of the request line, is ``BREW`` (not a particular common HTTP verb). Moreover, the content type is the HTCPCP specialize ``message/coffee`` pot, and the content itself is just the word "start". These three elements are key to creating a legal HTCPCP request. Get them wrong, and you will most likely be ignored by your digital barista.
+This is a simple HTCPCP request that will prompt the server to return a list of available beverages. To the untrained eye, this file will look like an ordinary HTTP request: it has a well-formed request line, a Host header, and some entity body. A closer look, however, makes it clear that this request makes us of some unconventional HTTP. Most notably, the request method, found at the beginning of the request line, is ``BREW`` (not a particular common HTTP verb). Moreover, the content type is the HTCPCP specialize ``message/coffee`` pot, and the content itself is just the word "start". These three elements are key to creating a legal HTCPCP request. Get them wrong, and you will most likely be ignored by your digital barista.
 
 You can send this request to an HTCPCP server by running the following netcat command.
 
@@ -322,12 +324,23 @@ After finishing our beverage, Pot 1 is no longer in use and is free to begin ser
 
 Oops. We can't stop a beverage when no beverage is being brewed. That's simple enough to remember.
 
-.. Requesting Tea
-.. --------------
-.. Adding Additions to HTCPCP Requests
-.. -----------------------------------
-.. Pouring Milk
-.. ------------
-.. Other Errors You'll Find in the Wild
-.. ------------------------------------
+Requesting Tea
+--------------
+
+To be documented.
+
+Adding Additions to HTCPCP Requests
+-----------------------------------
+
+To be documented.
+
+Pouring Milk
+------------
+
+To be documented.
+
+Other Errors You'll Find in the Wild
+------------------------------------
+
+To be documented.
 
