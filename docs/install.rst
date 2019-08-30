@@ -87,6 +87,8 @@ With this installation method, all HTCPCP URIs must be prefixed with the string 
 
     BREW /htcpcp/pot-1/ HTTP/1.1
 
+.. _install-schema-compliant:
+
 Schema Compliant Installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
