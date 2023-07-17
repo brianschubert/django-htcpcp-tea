@@ -12,38 +12,40 @@ from .decorators import require_htcpcp
 from .models import Addition, Pot
 from .settings import htcpcp_settings
 from .utils import (
-    build_alternates, find_forbidden_combinations, resolve_requested_additions,
+    build_alternates,
+    find_forbidden_combinations,
+    resolve_requested_additions,
 )
 
 
-# @require_htcpcp
+@require_htcpcp
 def brew_pot(request, pot_designator=None, tea_type=None):
     if not pot_designator:
         alternates = list(build_alternates())
-        context = {'alternatives': alternates}
-        response = render(request, 'django_htcpcp_tea/options.html', context, status=300)
+        context = {"alternatives": alternates}
+        response = render(
+            request, "django_htcpcp_tea/options.html", context, status=300
+        )
         response.htcpcp_alternates = alternates
         return response
 
-    if request.method == 'WHEN' and request.htcpcp_message_type == 'start':
+    if request.method == "WHEN" and request.htcpcp_message_type == "start":
         return render(
             request,
-            'django_htcpcp_tea/400.html',
-            {'error_reason': 'Cannot start a beverage with a WHEN request.'},
-            status=400
+            "django_htcpcp_tea/400.html",
+            {"error_reason": "Cannot start a beverage with a WHEN request."},
+            status=400,
         )
 
     pot = get_object_or_404(Pot, id=pot_designator)
 
-
-
     if _request_for_tea(request, tea_type):
         response = _precheck_teapot(request, pot, tea_type)
         # Beverage name only required when starting a new beverage
-        beverage_name = '{} Tea'.format(tea_type.capitalize) if tea_type else None
+        beverage_name = "{} Tea".format(tea_type.capitalize) if tea_type else None
     else:
         response = _precheck_coffee(request, pot)
-        beverage_name = 'coffee'
+        beverage_name = "coffee"
 
     if response is None:
         addition_names = resolve_requested_additions(request)
@@ -52,18 +54,22 @@ def brew_pot(request, pot_designator=None, tea_type=None):
         except Addition.DoesNotExist:
             # Fetch all supported additions for the requested pot.
             # Note that this will result in an additional query.
-            context = {'supported_additions': pot.supported_additions.all()}
-            return render(request, 'django_htcpcp_tea/406.html', context, status=406)
+            context = {"supported_additions": pot.supported_additions.all()}
+            return render(request, "django_htcpcp_tea/406.html", context, status=406)
 
         if htcpcp_settings.CHECK_FORBIDDEN:
             forbidden = find_forbidden_combinations(additions, tea_type)
 
             if forbidden:
-                context = {'matched_combinations': forbidden}
-                return render(request, "django_htcpcp_tea/403.html", context, status=403)
+                context = {"matched_combinations": forbidden}
+                return render(
+                    request, "django_htcpcp_tea/403.html", context, status=403
+                )
 
         if htcpcp_settings.POT_SESSIONS:
-            response = _finalize_beverage_with_session(request, pot, beverage_name, additions)
+            response = _finalize_beverage_with_session(
+                request, pot, beverage_name, additions
+            )
         else:
             response = _finalize_beverage(request, pot, beverage_name, additions)
 
@@ -81,7 +87,7 @@ def _request_for_tea(request, tea_type):
     inferred from the existence of a tea type in the request URI and the HTCPCP
     MIME type, if one is provided.
     """
-    if request.content_type == 'message/teapot':
+    if request.content_type == "message/teapot":
         return True
     elif not htcpcp_settings.STRICT_MIME_TYPE:
         return tea_type
@@ -95,13 +101,13 @@ def _precheck_coffee(request, pot):
     else None.
     """
     if pot.is_teapot:
-        return render(request, 'django_htcpcp_tea/418.html', status=418)
+        return render(request, "django_htcpcp_tea/418.html", status=418)
 
     if not pot.brew_coffee:
         return render(
             request,
-            'django_htcpcp_tea/503.html',
-            {'error_reason': 'Pot out of service. No coffee or tea available.'},
+            "django_htcpcp_tea/503.html",
+            {"error_reason": "Pot out of service. No coffee or tea available."},
             status=503,
         )
 
@@ -113,18 +119,24 @@ def _precheck_teapot(request, pot, tea):
     Return a response if a precondition for tea requests is not satisfied, else
     None.
     """
-    if request.htcpcp_message_type == 'start':
+    if request.htcpcp_message_type == "start":
         if not tea:  # Require tea type only when starting a new beverage
             alternatives = list(build_alternates(index_pot=pot))
-            context = {'alternatives': alternatives}
-            response = render(request, 'django_htcpcp_tea/options.html', context, status=300)
+            context = {"alternatives": alternatives}
+            response = render(
+                request, "django_htcpcp_tea/options.html", context, status=300
+            )
             response.htcpcp_alternates = alternatives
             return response
-        elif tea not in pot.supported_teas.values_list('slug', flat=True):
+        elif tea not in pot.supported_teas.values_list("slug", flat=True):
             return render(
                 request,
-                'django_htcpcp_tea/503.html',
-                {'error_reason': '{} is not available for this pot'.format(tea.capitalize)},
+                "django_htcpcp_tea/503.html",
+                {
+                    "error_reason": "{} is not available for this pot".format(
+                        tea.capitalize
+                    )
+                },
                 status=503,
             )
     return None
@@ -136,25 +148,33 @@ def _finalize_beverage(request, pot, beverage_name, additions):
     without referencing the user's session.
     """
     context = {
-        'pot': pot,
-        'beverage': beverage_name,
-        'additions': additions,
+        "pot": pot,
+        "beverage": beverage_name,
+        "additions": additions,
     }
 
-    if request.htcpcp_message_type == 'start':
-        if beverage_name == 'coffee':
+    if request.htcpcp_message_type == "start":
+        if beverage_name == "coffee":
             # Display alternatives when brewing coffee per RFC 7168 section 2.1.1
             alternates = list(build_alternates())
-            context['alternatives'] = alternates
-            response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
+            context["alternatives"] = alternates
+            response = render(
+                request, "django_htcpcp_tea/brewing.html", context, status=202
+            )  # Accepted
             response.htcpcp_alternates = alternates
         else:
-            response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
+            response = render(
+                request, "django_htcpcp_tea/brewing.html", context, status=202
+            )  # Accepted
     else:  # request.htcpcp_message_type == 'stop':
         if any(addition.is_milk for addition in additions):
-            response = render(request, 'django_htcpcp_tea/pouring.html', context, status=200)  # Ok
+            response = render(
+                request, "django_htcpcp_tea/pouring.html", context, status=200
+            )  # Ok
         else:
-            response = render(request, 'django_htcpcp_tea/finished.html', context, status=201)  # Created
+            response = render(
+                request, "django_htcpcp_tea/finished.html", context, status=201
+            )  # Created
 
     return response
 
@@ -164,13 +184,13 @@ def _finalize_beverage_with_session(request, pot, beverage_name, additions):
     Return a response to the beverage request according to the HTCPCP standard
     by referencing the current state of the user's session.
     """
-    session_key = 'htcpcp_pot_{}'.format(pot.id)
+    session_key = "htcpcp_pot_{}".format(pot.id)
     pot_status = request.session.get(session_key)
 
     context = {
-        'pot': pot,
-        'beverage': beverage_name,
-        'additions': additions,
+        "pot": pot,
+        "beverage": beverage_name,
+        "additions": additions,
     }
 
     # TODO add brew time and additions display to finished template
@@ -179,56 +199,82 @@ def _finalize_beverage_with_session(request, pot, beverage_name, additions):
         # 'stop' requests may not be able to reproduce the name of a beverage
         # or the additions that were requested, so override these values in the
         # context with the ones stored in the user's session.
-        context['beverage'] = pot_status['beverage']
-        context['additions'] = pot_status['additions']
+        context["beverage"] = pot_status["beverage"]
+        context["additions"] = pot_status["additions"]
 
-        if request.htcpcp_message_type == 'start':
-            context['error_reason'] = 'Pot is busy and cannot start a new beverage.'
-            response = render(request, 'django_htcpcp_tea/503.html', context, status=503)
+        if request.htcpcp_message_type == "start":
+            context["error_reason"] = "Pot is busy and cannot start a new beverage."
+            response = render(
+                request, "django_htcpcp_tea/503.html", context, status=503
+            )
         else:  # htcpcp_message_type == 'stop'
-            if request.method == 'WHEN':
-                if pot_status['currently_pouring']:
-                    response = render(request, 'django_htcpcp_tea/finished.html', context, status=201)
+            if request.method == "WHEN":
+                if pot_status["currently_pouring"]:
+                    response = render(
+                        request, "django_htcpcp_tea/finished.html", context, status=201
+                    )
                     del request.session[session_key]
                 else:
-                    context['error_reason'] = 'No milk is being poured. Please stop shouting "WHEN!"'
-                    return render(request, 'django_htcpcp_tea/400.html', context, status=400)
+                    context[
+                        "error_reason"
+                    ] = 'No milk is being poured. Please stop shouting "WHEN!"'
+                    return render(
+                        request, "django_htcpcp_tea/400.html", context, status=400
+                    )
             else:
-                if pot_status['currently_pouring']:
-                    context['error_reason'] = 'Milk is currently being poured. Please say "WHEN"'
+                if pot_status["currently_pouring"]:
+                    context[
+                        "error_reason"
+                    ] = 'Milk is currently being poured. Please say "WHEN"'
                     response = render(
-                        request, 'django_htcpcp_tea/400.html', context, status=400)
-                elif pot_status['needs_milk']:  # Stop brewing and begin pouring milk
-                    response = render(request, 'django_htcpcp_tea/pouring.html', context, status=200)
-                    request.session[session_key].update({
-                        'needs_milk': False,
-                        'currently_pouring': True,
-                    })
+                        request, "django_htcpcp_tea/400.html", context, status=400
+                    )
+                elif pot_status["needs_milk"]:  # Stop brewing and begin pouring milk
+                    response = render(
+                        request, "django_htcpcp_tea/pouring.html", context, status=200
+                    )
+                    request.session[session_key].update(
+                        {
+                            "needs_milk": False,
+                            "currently_pouring": True,
+                        }
+                    )
                     request.session.modified = True
                 else:  # Stop brewing. No milk required.
-                    response = render(request, 'django_htcpcp_tea/finished.html', context, status=201)
+                    response = render(
+                        request, "django_htcpcp_tea/finished.html", context, status=201
+                    )
                     del request.session[session_key]
-    elif request.htcpcp_message_type == 'start':
+    elif request.htcpcp_message_type == "start":
         # New session, and the client requested a new beverage
-        if beverage_name == 'coffee':
+        if beverage_name == "coffee":
             # Display alternatives when brewing coffee per RFC 7168 section 2.1.1
-            context['alternatives'] = build_alternates(index_pot=pot)
-        response = render(request, 'django_htcpcp_tea/brewing.html', context, status=202)  # Accepted
+            context["alternatives"] = build_alternates(index_pot=pot)
+        response = render(
+            request, "django_htcpcp_tea/brewing.html", context, status=202
+        )  # Accepted
         request.session[session_key] = {
-            'beverage': beverage_name,
+            "beverage": beverage_name,
             # Serialize the requested additions to as dictionaries for storage
             # in the user's session since we do not need actual Addition objects
             # to display the additions during future requests.
-            'additions': [{'name': a.name, 'get_type_display': a.get_type_display()} for a in additions],
-            'needs_milk': any(addition.is_milk for addition in additions),
-            'currently_pouring': False,
-            'start_time': datetime.utcnow().timestamp()
+            "additions": [
+                {"name": a.name, "get_type_display": a.get_type_display()}
+                for a in additions
+            ],
+            "needs_milk": any(addition.is_milk for addition in additions),
+            "currently_pouring": False,
+            "start_time": datetime.utcnow().timestamp(),
         }
     else:
-        reason = ("No beverage is being brewed by this pot, but the "
-                  "request did not indicate that a new beverage should be "
-                  "brewed")
-        response = render(request, 'django_htcpcp_tea/400.html', {'error_reason': reason}, status=400)
+        reason = (
+            "No beverage is being brewed by this pot, but the "
+            "request did not indicate that a new beverage should be "
+            "brewed"
+        )
+        response = render(
+            request, "django_htcpcp_tea/400.html", {"error_reason": reason}, status=400
+        )
 
     return response
 
