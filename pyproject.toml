@@ -1,0 +1,64 @@
+[tool.poetry]
+name = "django-htcpcp-tea"
+version = "0.8.0"
+description = "Django app implementing HTCPCP-TEA as defined in RFC 7168."
+license = "MIT"
+authors = ["Brian Schubert <brianm.schubert@gmail.com>"]
+readme = ["README.rst", "CHANGELOG.rst"]
+repository = "https://github.com/blueschu/django-htcpcp-tea"
+documentation = "https://django-htcpcp-tea.readthedocs.io/en/latest/"
+keywords = ["htcpcp", "django", "rfc-2324", "rfc-7168", "coffee", "tea"]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Environment :: Web Environment',
+    'Framework :: Django',
+    'Framework :: Django :: 2.0',
+    'Framework :: Django :: 2.1',
+    'Framework :: Django :: 2.2',
+    'Intended Audience :: Developers',
+    'Operating System :: OS Independent',
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+packages = [
+    { include = "django_htcpcp_tea" }
+]
+include = [
+    { path = "docs", format = "sdist" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+django = "^2.0,<3.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+isort = "^5.12.0"
+
+[tool.poetry.group.sample.dependencies]
+django-debug-toolbar = ">=2,<2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# Black config.
+[tool.black]
+# How many characters per line to allow.
+# https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html#line-length
+line-length = 88
+# Don't skip skip temporary sanity checks.
+safe = true
+# Python versions that should be supported by Black's output.
+target-version = ["py38"]
+# Set to true to preview style changes that may be added in black's next major release.
+preview = false
+# Don't format migration files.
+exclude = "/migrations/"
+
+# isort config.
+[tool.isort]
+profile = "black"
+# Don't sort imports in migration files.
+skip = ["migrations"]
+

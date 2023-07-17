@@ -1,8 +1,12 @@
+# Build and tooling artifcats
 __pycache__/
 *.pyc
-.idea/
 /dist/
 /build/
 /*.egg-info/
-/.coverage
 /docs/_build
+/.coverage
+
+# IDEs
+.idea/
+

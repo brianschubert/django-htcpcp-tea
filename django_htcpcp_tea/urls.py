@@ -9,8 +9,7 @@ from django.urls import path
 from .views import brew_pot
 
 urlpatterns = [
-    path('', brew_pot, name='htcpcp-index'),
-    path('pot-<int:pot_designator>/', brew_pot, name='pot-detail'),
-    path('pot-<int:pot_designator>/<str:tea_type>/', brew_pot, name='pot-detail-tea')
-
+    path("", brew_pot, name="htcpcp-index"),
+    path("pot-<int:pot_designator>/", brew_pot, name="pot-detail"),
+    path("pot-<int:pot_designator>/<str:tea_type>/", brew_pot, name="pot-detail-tea"),
 ]

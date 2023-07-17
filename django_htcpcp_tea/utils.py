@@ -19,12 +19,12 @@ def build_alternates(index_pot=None):
     if index_pot:
         pots = (index_pot,)
     else:
-        pots = Pot.objects.prefetch_related('supported_teas').all()
+        pots = Pot.objects.prefetch_related("supported_teas").all()
     for pot in pots:
         if pot.brew_coffee:
-            yield (reverse('pot-detail', args=[pot.id]), 'message/coffeepot')
+            yield reverse("pot-detail", args=[pot.id]), "message/coffeepot"
         for tea in pot.supported_teas.all():
-            yield (reverse('pot-detail-tea', args=[pot.id, tea.slug]), 'message/teapot')
+            yield reverse("pot-detail-tea", args=[pot.id, tea.slug]), "message/teapot"
 
 
 def render_alternates_header(alternates_pairs):
@@ -32,9 +32,7 @@ def render_alternates_header(alternates_pairs):
     Render (uri, content-type) pairs into an RFC 2295 Alternates header value.
     """
     fmt = '{{"{}" {{type {}}}}}'
-    return ','.join(
-        fmt.format(*pair) for pair in alternates_pairs
-    )
+    return ",".join(fmt.format(*pair) for pair in alternates_pairs)
 
 
 def resolve_requested_additions(request):
@@ -49,8 +47,8 @@ def resolve_requested_additions(request):
     that are supported by any pot.
     """
     try:
-        header = request.META['HTTP_ACCEPT_ADDITIONS']
-        additions = [addition.strip() for addition in header.split(',')]
+        header = request.META["HTTP_ACCEPT_ADDITIONS"]
+        additions = [addition.strip() for addition in header.split(",")]
     except KeyError:
         additions = []
 
@@ -70,7 +68,7 @@ def find_forbidden_combinations(requested_additions, tea_slug=None):
 
     # Calls to ForbiddenCombination.forbids_additions will need the full
     # list of forbidden additions for each retrieved objects.
-    forbidden = ForbiddenCombination.objects.prefetch_related('additions')
+    forbidden = ForbiddenCombination.objects.prefetch_related("additions")
 
     if tea_slug:
         forbidden = forbidden.filter(Q(tea__slug=tea_slug) | Q(tea__isnull=True))

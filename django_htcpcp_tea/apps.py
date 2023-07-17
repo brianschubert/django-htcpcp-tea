@@ -8,5 +8,5 @@ from django.apps import AppConfig
 
 
 class HTCPCPTeaConfig(AppConfig):
-    name = 'django_htcpcp_tea'
-    verbose_name = 'HTCPCP-TEA Server'
+    name = "django_htcpcp_tea"
+    verbose_name = "HTCPCP-TEA Server"
