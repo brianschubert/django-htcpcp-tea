@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "django-htcpcp-tea"
+version = "0.7.0"
+description = ""
+authors = ["Brian Schubert <brianm.schubert@gmail.com>"]
+readme = "README.rst"
+packages = [{include = "django_htcpcp_tea"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
