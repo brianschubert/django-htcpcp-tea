@@ -34,6 +34,13 @@ packages = [
 python = "^3.8"
 django = "^2.0,<3.0"
 
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+isort = "^5.12.0"
+
+[tool.poetry.group.sample.dependencies]
+django-debug-toolbar = ">=2,<2.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
