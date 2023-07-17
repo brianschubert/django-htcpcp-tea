@@ -16,7 +16,7 @@ from .utils import (
 )
 
 
-@require_htcpcp
+# @require_htcpcp
 def brew_pot(request, pot_designator=None, tea_type=None):
     if not pot_designator:
         alternates = list(build_alternates())
@@ -34,6 +34,8 @@ def brew_pot(request, pot_designator=None, tea_type=None):
         )
 
     pot = get_object_or_404(Pot, id=pot_designator)
+
+
 
     if _request_for_tea(request, tea_type):
         response = _precheck_teapot(request, pot, tea_type)
