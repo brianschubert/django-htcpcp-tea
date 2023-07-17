@@ -1,0 +1,7 @@
+WHEN /pot-4/ HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: message/coffeepot
+Cookie: sessionid=x9xsaftyq7xt38by187gep6v84lfe1pg
+Content-Length: 4
+
+stop

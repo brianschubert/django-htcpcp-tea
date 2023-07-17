@@ -5,6 +5,10 @@
 Examples
 ========
 
+.. warning::
+
+    This documentation has not been updated since 2019.
+
 This document highlights the basic usage of Django HTCPCP-TEA by interacting with it over a command line interface. It is worth noting that since Django HTCPCP-TEA simulates an HTTP extension, there are many other ways to use it beyond a CLI.
 
 In these examples, I will be using the GNU `netcat`_ utility to transmit HTTP requests. Netcat is available for most Unix systems, including MacOS and Linux. Similar utilities are also available for Windows systems.

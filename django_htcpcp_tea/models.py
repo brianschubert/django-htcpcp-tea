@@ -13,51 +13,46 @@ from django.utils.functional import cached_property
 
 class PotQuerySet(models.QuerySet):
     def _count_relation(self, field, annotation_name):
-        return self.annotate(**{
-            annotation_name: Count(field, distinct=True)
-        })
+        return self.annotate(**{annotation_name: Count(field, distinct=True)})
 
     def with_tea_count(self):
-        return self._count_relation('supported_teas', 'tea_count')
+        return self._count_relation("supported_teas", "tea_count")
 
     def with_addition_count(self):
-        return self._count_relation('supported_additions', 'addition_count')
+        return self._count_relation("supported_additions", "addition_count")
 
 
 class Pot(models.Model):
     """A Tea- or Coffee Pot capable of brewing a choice beverage."""
+
     name = models.CharField(
         max_length=35,
         unique=True,
         help_text='The name of this pot, e.g. "Joe\'s Joe Jar" or "Breville (R)'
-                  ' BTM800XL"',
+        ' BTM800XL"',
     )
 
     brew_coffee = models.BooleanField(
-        verbose_name='able to brew coffee',
+        verbose_name="able to brew coffee",
         default=True,
         help_text="Can this pot brew coffee?",
     )
 
     supported_teas = models.ManyToManyField(
-        'TeaType',
-        blank=True,
-        related_name='pot_list'
+        "TeaType", blank=True, related_name="pot_list"
     )
 
     supported_additions = models.ManyToManyField(
-        'Addition',
-        blank=True,
-        related_name='pot_list'
+        "Addition", blank=True, related_name="pot_list"
     )
 
     objects = PotQuerySet.as_manager()
 
     def __str__(self):
-        return '{} - {}'.format(self.id, self.name)
+        return "{} - {}".format(self.id, self.name)
 
     def get_absolute_url(self):
-        return reverse('pot-detail', args=(self.pk,))
+        return reverse("pot-detail", args=(self.pk,))
 
     @cached_property
     def tea_capable(self):
@@ -92,8 +87,9 @@ class TeaType(models.Model):
 
     Per the HTCPCP standard, tea may be available as tea bags or tea leaves.
     """
+
     name = models.CharField(
-        verbose_name='Tea name',
+        verbose_name="Tea name",
         max_length=35,
         unique=True,
         db_index=True,
@@ -111,19 +107,19 @@ class Addition(models.Model):
     field of an HTCPCP request.
     """
 
-    MILK = 'MLK'
+    MILK = "MLK"
 
-    SYRUP = 'SYP'
+    SYRUP = "SYP"
 
-    SWEETENER = 'SWT'
+    SWEETENER = "SWT"
 
-    SPICE = 'SPC'
+    SPICE = "SPC"
 
-    ALCOHOL = 'ACL'
+    ALCOHOL = "ACL"
 
-    SUGAR = 'SUG'
+    SUGAR = "SUG"
 
-    OTHER = 'OTR'
+    OTHER = "OTR"
 
     TYPE_CHOICES = (
         (MILK, "Milk"),
@@ -139,13 +135,13 @@ class Addition(models.Model):
         max_length=35,
         unique=True,
         help_text="The name of this beverage addition as it would appear in the"
-                  " HTCPCP Accept-Additions header field.",
+        " HTCPCP Accept-Additions header field.",
     )
 
     type = models.CharField(
         max_length=3,
         choices=TYPE_CHOICES,
-        verbose_name='Addition type',
+        verbose_name="Addition type",
     )
 
     def clean(self):
@@ -153,10 +149,12 @@ class Addition(models.Model):
         # future (currently it is empty).
         super().clean()
 
-        error_msg = ("Decaffeinated addition not allowed. RFC 2324 specifies "
-                     "no option for decaffeinated coffee. What's the point? ")
+        error_msg = (
+            "Decaffeinated addition not allowed. RFC 2324 specifies "
+            "no option for decaffeinated coffee. What's the point? "
+        )
 
-        if 'decaffeinated' in self.name.lower():
+        if "decaffeinated" in self.name.lower():
             raise ValidationError(error_msg)
 
     def __str__(self):
@@ -173,27 +171,27 @@ class ForbiddenCombination(models.Model):
     consensus of drinkers", either for a specific variety of tea or for all
     beverages.
     """
+
     tea = models.ForeignKey(
         TeaType,
         null=True,
         blank=True,
         on_delete=models.CASCADE,
-        related_name='forbidden_combinations',
-        help_text=("The type of tea that this forbidden combination applies to."
-                   " Leave blank to apply to all beverages."),
+        related_name="forbidden_combinations",
+        help_text=(
+            "The type of tea that this forbidden combination applies to."
+            " Leave blank to apply to all beverages."
+        ),
     )
 
-    additions = models.ManyToManyField(
-        Addition,
-        related_name='forbidden_combinations'
-    )
+    additions = models.ManyToManyField(Addition, related_name="forbidden_combinations")
 
     reason = models.CharField(max_length=180)
 
     def __str__(self):
-        return '{} / {}'.format(
-            'All' if not self.tea else self.tea.name,
-            ', '.join(a.name for a in self.additions.all())
+        return "{} / {}".format(
+            "All" if not self.tea else self.tea.name,
+            ", ".join(a.name for a in self.additions.all()),
         )
 
     def forbids_additions(self, requested_additions):

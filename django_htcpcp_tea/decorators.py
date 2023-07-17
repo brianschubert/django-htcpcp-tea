@@ -34,12 +34,13 @@ def safe_condition(token):
 
     .. _RFC 2324 section 2.2.1.1: https://tools.ietf.org/html/rfc2324#section-2.2.1.1
     """
+
     def decorator(func):
         @wraps(func)
         def _wrapped_view(request, *args, **kwargs):
             response = func(request, *args, **kwargs)
             if htcpcp_settings.USE_SAFE_HEADER_EXT:
-                response['Safe'] = 'if-{}'.format(token)
+                response["Safe"] = "if-{}".format(token)
             return response
 
         return _wrapped_view
@@ -47,7 +48,7 @@ def safe_condition(token):
     return decorator
 
 
-safe_require_user_awake = safe_condition('user-awake')
+safe_require_user_awake = safe_condition("user-awake")
 """
 Decorator for adding an "if-user-awake" safe condition to the Safe header
 field.
@@ -56,4 +57,3 @@ See `RFC 2324 section 2.2.1.1`_ for further details.
 
 .. _RFC 2324 section 2.2.1.1: https://tools.ietf.org/html/rfc2324#section-2.2.1.1
 """
-

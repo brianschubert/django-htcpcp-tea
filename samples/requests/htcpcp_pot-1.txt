@@ -1,0 +1,6 @@
+WHEN /htcpcp/pot-0/ HTTP/1.1
+Host: 127.0.0.1
+Content-Length: 10
+Content-Type: message/coffeepot
+
+start=true

@@ -40,12 +40,15 @@ class _HTCPCPTeaSettings:
 
     def __getattribute__(self, item):
         try:
-            return getattr(django_settings, '{}_{}'.format(
-                object.__getattribute__(self, 'prefix'),
-                item,
-            ))
+            return getattr(
+                django_settings,
+                "{}_{}".format(
+                    object.__getattribute__(self, "prefix"),
+                    item,
+                ),
+            )
         except AttributeError:
             return object.__getattribute__(self, item)
 
 
-htcpcp_settings = _HTCPCPTeaSettings('HTCPCP')
+htcpcp_settings = _HTCPCPTeaSettings("HTCPCP")
