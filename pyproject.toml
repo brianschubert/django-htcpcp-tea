@@ -56,7 +56,12 @@ safe = true
 target-version = ["py38"]
 # Set to true to preview style changes that may be added in black's next major release.
 preview = false
+# Don't format migration files.
+exclude = "/migrations/"
 
 # isort config.
 [tool.isort]
 profile = "black"
+# Don't sort imports in migration files.
+skip = ["migrations"]
+
