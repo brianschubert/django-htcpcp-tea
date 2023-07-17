@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-htcpcp-tea"
-version = "0.8.0"
+version = "0.8.1"
 description = "Django app implementing HTCPCP-TEA as defined in RFC 7168."
 license = "MIT"
 authors = ["Brian Schubert <brianm.schubert@gmail.com>"]
@@ -36,7 +36,7 @@ black = "^23.7.0"
 isort = "^5.12.0"
 
 [tool.poetry.group.sample.dependencies]
-django-debug-toolbar = ">=2,<2.1"
+django-debug-toolbar = "^2.0"
 
 [build-system]
 requires = ["poetry-core"]
