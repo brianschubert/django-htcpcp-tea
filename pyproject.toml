@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-htcpcp-tea"
-version = "0.8.0"
+version = "0.8.1"
 description = "Django app implementing HTCPCP-TEA as defined in RFC 7168."
 license = "MIT"
 authors = ["Brian Schubert <brianm.schubert@gmail.com>"]
