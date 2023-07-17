@@ -5,7 +5,7 @@ For complete record of changes, see the commit log of the `public git repository
 
 .. _public git repository: https://github.com/blueschu/django-htcpcp-tea
 
-Unreleased
+v0.8.0
 ----------
 
 - Migrated build system from ``setuptools`` to ``poetry``.
