@@ -29,7 +29,7 @@ Alternatively, you can install Django HTCPCP-TEA from its source:
 
 .. code-block:: console
 
-    $ git clone git://github.com/blueschu/django-htcpcp-tea.git
+    $ git clone git://github.com/brianschubert/django-htcpcp-tea.git
     $ cd django-htcpcp-tea
     $ python3 setup.py install
 

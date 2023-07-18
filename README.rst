@@ -17,7 +17,7 @@ Django HTCPCP-TEA
     :target: https://pypi.org/project/django-htcpcp-tea/
     :alt: PyPI - django-htcpcp-tea
 
-.. image:: https://img.shields.io/github/license/blueschu/django-htcpcp-tea.svg
+.. image:: https://img.shields.io/github/license/brianschubert/django-htcpcp-tea.svg
     :target: ./LICENSE
     :alt: License
 
